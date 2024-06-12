@@ -98,7 +98,7 @@ void regis();
 void forgot();
 void cticket();
 void displaycustomer();
-void displayselect(int index);
+void displayselect(int index, char dis);
 void cview();
 void cupdate();
 void delmenu();
@@ -574,37 +574,79 @@ void displaycustomer(){
              << string(10, '-') << "+\n";
     }
 }
-void displayselect(int index) {
+void displayselect(int index, char dis) {
     system("CLS");
-    cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+    if(dis == 'p'){
+        cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
          << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
          << string(32, '-') << "+" << string(15, '-') << "+" << string(12, '-') << "+"
          << string(10, '-') << "+\n";
-    cout << "| " << left << setw(3) << "ID" << " | " << setw(30) << "Customer Name" << " | "
-         << setw(13) << "Contact No." << " | " << setw(13) << "Device Type" << " | "
-         << setw(13) << "Brand" << " | " << setw(18) << "Model" << " | " << setw(30) << "Issue" << " | "
-         << setw(13) << "Status" << " | " << setw(10) << "Date" << " | "
-         << setw(8) << "Time" << " |\n";
-    cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
-         << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
-         << string(32, '-') << "+" << string(15, '-') << "+" << string(12, '-') << "+"
-         << string(10, '-') << "+\n";
+        cout << "| " << left << setw(3) << "ID" << " | " << setw(30) << "Customer Name" << " | "
+            << setw(13) << "Contact No." << " | " << setw(13) << "Device Type" << " | "
+            << setw(13) << "Brand" << " | " << setw(18) << "Model" << " | " << setw(30) << "Issue" << " | "
+            << setw(13) << "Status" << " | " << setw(10) << "Date" << " | "
+            << setw(8) << "Time" << " |\n";
+        cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+            << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
+            << string(32, '-') << "+" << string(15, '-') << "+" << string(12, '-') << "+"
+            << string(10, '-') << "+\n";
 
-    // Display selected request
-    cout << "| " << setw(3) << left << index + 1<< " | " 
-         << setw(30) << cellphone[index].cname << " | "
-         << setw(13) << cellphone[index].cnum << " | "
-         << setw(13) << cellphone[index].dtype << " | "
-         << setw(13) << cellphone[index].brand << " | "
-         << setw(18) << cellphone[index].model << " | "
-         << setw(30) << cellphone[index].issue << " | "
-         << setw(13) << cellphone[index].status << " | "
-         << setw(10) << cellphone[index].date << " | "
-         << setw(8) << cellphone[index].time << " |\n";
-    cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
-         << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
-         << string(32, '-') << "+" << string(15, '-') << "+" << string(12, '-') << "+"
-         << string(10, '-') << "+\n";
+        // Display selected request
+        cout << "| " << setw(3) << left << index + 1<< " | " 
+            << setw(30) << cellphone[index].cname << " | "
+            << setw(13) << cellphone[index].cnum << " | "
+            << setw(13) << cellphone[index].dtype << " | "
+            << setw(13) << cellphone[index].brand << " | "
+            << setw(18) << cellphone[index].model << " | "
+            << setw(30) << cellphone[index].issue << " | "
+            << setw(13) << cellphone[index].status << " | "
+            << setw(10) << cellphone[index].date << " | "
+            << setw(8) << cellphone[index].time << " |\n";
+        cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+            << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
+            << string(32, '-') << "+" << string(15, '-') << "+" << string(12, '-') << "+"
+            << string(10, '-') << "+\n";
+    }
+    else if(dis == 'b'){
+        // Table header
+        cout << "+" << string(5, '-') << "+" << string(15, '-') << "+" << string(15, '-') << "+"
+            << string(20, '-') << "+" << string(20, '-') << "+" << string(10, '-') << "+"
+            << string(10, '-') << "+" << string(20, '-') << "+" << string(9, '-') << "+"
+            << string(17, '-') << "+" << string(17, '-') << "+\n";
+            
+        cout << "| " << left << setw(3) << "No." << " | " << setw(13) << "Brand" << " | "
+            << setw(13) << "Device Type" << " | " << setw(18) << "Model" << " | "
+            << setw(18) << "Display/Resolution" << " | " << setw(8) << "Camera" << " | "
+            << setw(8) << "Storage" << " | " << setw(18) << "Processor" << " | "
+            << setw(7) << "RAM" << " | " << setw(15) << "Status" << " | "
+            << setw(15) << "Price" << " |\n";
+            
+        cout << "+" << string(5, '-') << "+" << string(15, '-') << "+" << string(15, '-') << "+"
+            << string(20, '-') << "+" << string(20, '-') << "+" << string(10, '-') << "+"
+            << string(10, '-') << "+" << string(20, '-') << "+" << string(9, '-') << "+"
+            << string(17, '-') << "+" << string(17, '-') << "+\n";
+        
+        // Table rows
+        cout << "| " << setw(3) << left << index+1 << " | " 
+                << setw(13) << bns[index].brand << " | "
+                << setw(13) << bns[index].dtype << " | "
+                << setw(18) << bns[index].model << " | "
+                << setw(18) << bns[index].display << " | "
+                << setw(8) << bns[index].cam << " | "
+                << setw(8) << bns[index].storage << " | "
+                << setw(18) << bns[index].cpu << " | "
+                << setw(7) << bns[index].ram << " | "
+                << setw(15) << bns[index].status << " | "
+                << setw(2) << "PHP " << setw(11) << bns[index].price << " |\n";
+                
+        cout << "+" << string(5, '-') << "+" << string(15, '-') << "+" << string(15, '-') << "+"
+            << string(20, '-') << "+" << string(20, '-') << "+" << string(10, '-') << "+"
+            << string(10, '-') << "+" << string(20, '-') << "+" << string(9, '-') << "+"
+            << string(17, '-') << "+" << string(17, '-') << "+\n";
+    }
+
+         
+    
 }
 void cview(){
     loadpending(); 
@@ -631,7 +673,8 @@ void cupdate()
 		if (i + 1 == num) 
 		{
 			index = i;
-            displayselect(index);
+            char dis = 'p';
+            displayselect(index, dis);
 			break;
 		}
 	}
@@ -738,8 +781,9 @@ void buynsell(){
         switch(choice){
             case 1: addprod(); return;
             case 2: viewprod(); return;
-            case 3: viewcancel(); return;
-            case 4: main(); return;
+            case 3: updateprod(); return;
+            case 4: delprod(); return;
+            case 7: main(); return;
             default:
                 cout << "Invalid choice!" << endl;
                 this_thread::sleep_for(chrono::seconds(1));
@@ -826,7 +870,110 @@ void displayprod() {
          << string(17, '-') << "+" << string(17, '-') << "+\n";
     }
 }
-
+void updateprod(){
+    int num = 0;
+	system("CLS");
+	cout << "Products:" << endl;
+	displayprod();
+	cout << "Enter ID to be updated: ";
+	cin >> num;
+	int index = -1; 
+	for (int i = 0; i < bid; i++) 
+	{
+		if (i + 1 == num) 
+		{
+			index = i;
+            char dis = 'b';
+            displayselect(index, dis);
+			break;
+		}
+	}
+	if (index != -1)
+	{
+        char type = 'b';
+		cout<<"Brand: ";
+        getline(cin >> ws, bns[index].brand);
+        cout<<"Device Type: ";
+        getline(cin >> ws, bns[index].dtype);
+        cout<<"Model: ";
+        getline(cin>>ws, bns[index].model);
+        cout<<"Display/Resolution: ";
+        getline(cin>>ws, bns[index].display);
+        cout<<"Camera: ";
+        getline(cin>>ws, bns[index].cam);
+        cout<<"Storage: ";
+        getline(cin>>ws, bns[index].storage);
+        cout<<"Processor: ";
+        getline(cin>>ws, bns[index].cpu);
+        cout<<"RAM: ";
+        getline(cin>>ws, bns[index].ram);
+        cout<<"Price: ";
+        cin>>bns[index].price;
+		cout << "Product updated successfully!" << endl;
+        this_thread::sleep_for(chrono::seconds(3));
+		save(type);
+	}
+	else
+	{
+		cout << "Product not found!" << endl;
+        this_thread::sleep_for(chrono::seconds(2));
+	}
+	buynsell();
+}
+void delprod(){
+    int num = 0;
+	system("CLS");
+	cout << "Products:" << endl;
+	displayprod();
+	cout << "Enter No. to be deleted: ";
+	cin >> num; 
+	int index = -1;  
+	for (int i = 0; i < bid; i++) 
+	{
+		if (i + 1 == num) 
+		{
+            char dis = 'b';
+			index = i;
+            displayselect(index,dis);
+			break;
+		}
+	}
+        
+	if (index != -1)
+	{
+        while(true){
+            char done;
+            cout<<"Are you sure you want to delete this product?\n [y] YES or [n] NO: ";
+            cin>>done;
+            if(done == 'y'||done == 'Y'){
+                char type = 'b';
+                for (int i = index; i < bid - 1; i++) 
+                {
+                    bns[i] = bns[i + 1]; 	
+                }
+                bid--; 
+                cout << "Product deleted successfully!" << endl;
+                this_thread::sleep_for(chrono::seconds(3));
+                save(type);
+                break;
+            }else if(done == 'n'||done=='N'){
+                cout<<">> going back to buy 'n sell menu...";
+                this_thread::sleep_for(chrono::seconds(2));
+                buynsell();
+                break;
+            }else{
+                cout<<"Invalid Input!\n";
+                this_thread::sleep_for(chrono::seconds(1));
+            }
+        }    
+	}
+	else
+	{
+		cout << "Product not found!" << endl;
+        this_thread::sleep_for(chrono::seconds(2));
+	}
+	buynsell();
+}
 void paymenu(){
     while(true){
         system("CLS");
@@ -863,7 +1010,8 @@ void collect(){
     for (int i = 0; i < id; i++){
 		if (i + 1 == num){
             index = i;
-			displayselect(index);
+            char dis = 'p';
+			displayselect(index,dis);
             break;
 		}
 	}
@@ -874,10 +1022,10 @@ void collect(){
 
         if(done == 'y'|| done == 'Y'){
             char type = 'p';
-            computeRate(index);
             cellphone[index].status = "Completed";
             cellphone[index].date = getCurrentDateTime("%m-%d-%Y");
             cellphone[index].time = getCurrentDateTime("%I:%M %p");
+            computeRate(index);
             comid++;
             ofstream transfer("completed.txt", ios::app);
             if (transfer.is_open()) {
@@ -976,18 +1124,18 @@ void viewcomplete(){
     // Table header
     cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
          << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
-         << string(32, '-') << "+" << string(15, '-') << "+" << string(15, '-') << "+" 
+         << string(32, '-') << "+" << string(11, '-') << "+" << string(15, '-') << "+" 
          << string(12, '-') << "+" << string(10, '-') << "+\n";
          
     cout << "| " << left << setw(3) << "ID" << " | " << setw(30) << "Customer Name" << " | "
          << setw(13) << "Contact No." << " | " << setw(13) << "Device Type" << " | "
          << setw(13) << "Brand" << " | " << setw(18) << "Model" << " | " << setw(30) << "Issue" << " | "
-         << setw(13) << "Status" << " | " << setw(13) << "Price" << " | " << setw(10) << "Date" << " | "
+         << setw(9) << "Status" << " | " << setw(13) << "Price" << " | " << setw(10) << "Date" << " | "
          << setw(8) << "Time" << " |\n";
          
     cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
          << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
-         << string(32, '-') << "+" << string(15, '-') << "+" << string(15, '-') << "+" 
+         << string(32, '-') << "+" << string(11, '-') << "+" << string(15, '-') << "+" 
          << string(12, '-') << "+" << string(10, '-') << "+\n";
     
     // Table rows
@@ -999,15 +1147,15 @@ void viewcomplete(){
              << setw(13) << complete[i].brand << " | "
              << setw(18) << complete[i].model << " | "
              << setw(30) << complete[i].issue << " | "
-             << setw(13) << complete[i].status << " | "
-             << setw(13) << "PHP " << complete[i].rate << " | "
+             << setw(9) << complete[i].status << " | "
+             << setw(2) << "PHP " << setw(9)<< complete[i].rate << " | "
              << setw(10) << complete[i].date << " | "
              << setw(8) << complete[i].time << " |\n";
              
         cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
-             << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
-             << string(32, '-') << "+" << string(15, '-') << "+" << string(15, '-') << "+"
-             << string(12, '-') << "+" << string(10, '-') << "+\n";
+            << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
+            << string(32, '-') << "+" << string(11, '-') << "+" << string(15, '-') << "+" 
+            << string(12, '-') << "+" << string(10, '-') << "+\n";
     }
     cout<<endl;
     cout<<"Press Enter to go back\n";
