@@ -166,8 +166,11 @@ void computeRate(int index, char type){
     }
     
 }
+void setLimeColor() {
+    cout << "\033[1;92m"; // Set the text color to lime
+}
 
-
+void welcomescreen();
 
 void loadpending();
 void loadcomplete();
@@ -181,6 +184,7 @@ void login();
 void regis();
 void forgot();
 void updateadmin();
+void settings();
 
 void cticket();
 void displaycustomer();
@@ -205,7 +209,7 @@ void viewcomplete();
 void sanglamenu();
 void sanglaan();
 void sanglahistory();
-void settings();
+
 //considerations
 void delmenu();
 void specdel();
@@ -213,6 +217,7 @@ void alldel();
 
 
 int main(){
+    setLimeColor();
     ifstream empty("useradmin.txt");
     if (empty.peek() == ifstream::traits_type::eof()) {
         empty.close();
@@ -238,7 +243,8 @@ int main(){
         cout<<"4. Payment & Request History\n";
         cout<<"5. Buy 'n Sell\n";
         cout<<"6. Sangla\n";
-        cout<<"7. Exit\n";
+        cout<<"7. Settings\n";
+        cout<<"8. Exit\n";
         cout<<"Enter your choice: ";
         cin>>choice;
         switch(choice)
@@ -249,14 +255,43 @@ int main(){
             case 4: paymenu(); break;
             case 5: buynsell(); break;
             case 6: sanglaan(); break;
-            case 7: exit(0);
+            case 7: settings(); break;
+            case 8: 
+                cout<< "\nThank you! Exiting..\n";
+                this_thread::sleep_for(chrono::seconds(1));
+                exit(0);
             default: 
-                cout << "Invalid choice!" << endl;
+                cout << "\nInvalid choice!\n";
                 this_thread::sleep_for(chrono::seconds(1));
         }
         cout<<endl;
     }
     
+}
+void welcomescreen() {
+    system("CLS");
+
+    int screenWidth = 60;
+    int logoWidth = 14;
+    int titleWidth = 30;
+    int welcomeWidth = 35;
+
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "┌───────┐" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "│       │" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "│       │" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "│   ●   │" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "│       │" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "│       │" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "└───────┘" << endl;
+    cout << endl;
+
+    cout << setw((screenWidth - titleWidth) / 2) << "" << "CELLPHONE REPAIR REQUEST SYSTEM" << endl;
+    cout << endl;
+
+    cout << setw((screenWidth - welcomeWidth) / 2) << "" << "Welcome to our Cellphone Repair Service" << endl;
+    cout << endl;
+
+    this_thread::sleep_for(chrono::seconds(3));
 }
 // save & load file for customer request
 void loadpending()
@@ -451,58 +486,86 @@ void loadsold(){
     read.close();
 }
 //security
-void signIn(){
+void signIn() {
     system("CLS");
     int choice;
-    cout<<"*********************************************"<<endl;
-    cout<<"*******CELLPHONE REPAIR REQUEST SYSTEM*******"<<endl;
-    cout<<"1. Login \n";
-    cout<<"2. Forgot Username or Password\n";
-    cout<<"Enter your choice: ";
-    cin >> choice;
-    cout<<endl;
 
-    switch (choice)
-    {
+    cout << "+----------------------------------------------------+" << endl;
+    cout << "|            CELLPHONE REPAIR REQUEST SYSTEM         |" << endl;
+    cout << "+----------------------------------------------------+" << endl;
+    cout << "| 1. Login                                           |" << endl;
+    cout << "| 2. Forgot Username or Password                     |" << endl;
+    cout << "| Enter your choice: ";
+    cin >> choice;
+    cout << "+----------------------------------------------------+" << endl;
+
+    switch (choice) {
     case 1: login(); return;
     case 2: forgot(); return;
     default:
         system("CLS");
-        cout<<"Input Invalid\n";
+        cout << "+----------------------------------------------------+" << endl;
+        cout << "|               Invalid Input                        |" << endl;
+        cout << "+----------------------------------------------------+" << endl;
         this_thread::sleep_for(chrono::seconds(2));
         signIn();
     }
-};
-void login(){
-    int count;
-    string user,pass;
-    system("CLS");
-    cout<<"Enter your username:";
-    cin>>user;
-    cout<<"Enter your password:";
-    pass = getPassword();
+}
+void login() {
+    int count = 0;
+    bool found = false;
+    string user, pass;
 
-    ifstream input("useradmin.txt");
-    while(input>>signup[0][0]>>signup[0][1]>>signup[0][2]>>signup[0][3]){
-        if(signup[0][0]==user && signup[0][1]==pass){
-            count=1;
-            sign = true;
-            system("cls");
+    while (true) {
+        system("CLS");
+        cout << "+---------------------------+" << endl;
+        cout << "|        Login Menu         |" << endl;
+        cout << "+---------------------------+" << endl;
+        cout << "| Enter your username:      |" << endl;
+        cout << "| > ";
+        cin >> user;
+        cout << "| Enter your password:      |" << endl;
+        cout << "| > ";
+        pass = getPassword();
+        cout << "+---------------------------+" << endl;
+
+        ifstream input("useradmin.txt");
+        while (input >> signup[0][0] >> signup[0][1] >> signup[0][2] >> signup[0][3]) {
+            if (signup[0][0] == user && signup[0][1] == pass) {
+                found = true;
+                system("cls");
+            }
         }
-    }
-    input.close();
-    if(count==1){
-        cout<<"\nHello "<<user<<"\n\nLOGIN SUCCESSFUL...\n";
-        this_thread::sleep_for(chrono::seconds(3));
-        main();
-    }
-    else{
-        cout<<"\nInvalid Username or Password\nPlease Try Again..\n";
-        this_thread::sleep_for(chrono::seconds(2));
-        main();
+        input.close();
+
+        if (found == true) {
+            sign = true;
+            cout << "+---------------------------+" << endl;
+            cout << "|     LOGIN SUCCESSFUL!     |" << endl;
+            cout << "|     Hello, " << left << setw(10) << user << "|" << endl;
+            cout << "+---------------------------+" << endl;
+            this_thread::sleep_for(chrono::seconds(3));
+            main();
+        } else if (count == 5) {
+            cout << "+---------------------------+" << endl;
+            cout << "|   Too many attempts!      |" << endl;
+            cout << "|    Exiting the program... |" << endl;
+            cout << "+---------------------------+" << endl;
+            this_thread::sleep_for(chrono::seconds(2));
+            exit(0);
+        } else {
+            cout << "+---------------------------+" << endl;
+            cout << "| Invalid Username or       |" << endl;
+            cout << "| Password. Please try      |" << endl;
+            cout << "| again.                    |" << endl;
+            cout << "+---------------------------+" << endl;
+            this_thread::sleep_for(chrono::seconds(2));
+            count++;
+        }
     }
 }
 void regis(){
+    welcomescreen();
     string conpass;
     system("CLS");
     cout << "Note: Think throughly for credentials you have to input\n\n";
@@ -635,7 +698,6 @@ void forgot()
                     forgot();
         }
 }
-//main menu
 void updateadmin(){
     char a;
     while(true){
@@ -753,6 +815,48 @@ void updateadmin(){
 
     
 }
+void settings(){
+    int count = 0, max = 5;
+    string pass;
+    while(true){
+        cout<<"Enter your password before you proceed: ";
+        pass = getPassword();
+        if(pass != signup[0][1]){
+            cout << "Password Incorrect\n";
+            count++;
+        }
+        else if(count == max){
+            cout<<"\nToo many attempts! Exiting the program...\n";  //nabuang na ata to, hindi napasok dito kahit nagana yung count
+            this_thread::sleep_for(chrono::seconds(2));
+            exit(0);
+        }
+        else{
+            break;
+        }
+    }
+    while(true){
+        system("CLS");
+        int choice = 0;
+        cout<<"********************************************"<<endl;
+        cout<<"****************** Settings *****************"<<endl;
+        cout<<"Please select an option: \n";
+        cout<<"1. Account Settings\n";
+        cout<<"2. Di mo shore\n";
+        cout<<"3. Go Back\n";
+        cout<<"Enter your choice: ";
+        cin>>choice;
+        switch(choice)
+        {
+            case 1: updateadmin(); return;
+            case 2: cview(); return;
+            case 3: main(); return;
+            default: 
+                cout << "Invalid choice!" << endl;
+                this_thread::sleep_for(chrono::seconds(1));
+        }
+    } 
+}
+//main menu
 void cticket(){
     char type = 'p';
     system("CLS");
@@ -1302,7 +1406,7 @@ void viewsold(){
          << setw(18) << "Display/Resolution" << " | " << setw(8) << "Camera" << " | "
          << setw(8) << "Storage" << " | " << setw(18) << "Processor" << " | "
          << setw(7) << "RAM" << " | " << setw(15) << "Status" << " | "
-         << setw(15) << "Price" << setw(10) << "Date" << " | "<< setw(8) << "Time" << " |\n";
+         << setw(15) << "Price" << " | " << setw(10) << "Date" << " | "<< setw(8) << "Time" << " |\n";
          
     cout << "+" << string(5, '-') << "+" << string(15, '-') << "+" << string(15, '-') << "+"
          << string(20, '-') << "+" << string(12, '-') << "+" << string(20, '-') << "+" << string(10, '-') << "+"
