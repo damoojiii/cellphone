@@ -12,12 +12,12 @@
 using namespace std;
 
 struct request{
-    //long long int cnum;
+    //long long int cnum; for phone number but I chose to use string
     string cname,cnum, brand, model, issue, dtype, status, date, time;
     int rate;
 };
 struct buysell{
-    string dtype, brand, model, color, display, cam, cpu, storage, ram, status, issue, condition, date, time;
+    string dtype, brand, model, color, display, cam, cpu, storage, ram, status, issue, date, time;
     int price;
 };
 
@@ -31,8 +31,6 @@ request complete[100];
 buysell bns[100];
 buysell sold[100];
 
-buysell sangla[100];
-
 vector<int> indexes;
 vector<request> searchResults;
 vector<buysell> prodResults;
@@ -41,7 +39,7 @@ vector<buysell> prodResults;
 int id = 0, canid = 0, comid = 0;
 int bid = 0, sid = 0;
 
-bool sign = false;
+bool sign = false, start = true;
 
 
 //current time function
@@ -213,9 +211,6 @@ void collect();
 void viewcancel();
 void viewcomplete();
 //working
-void sanglamenu();
-void sanglaan();
-void sanglahistory();
 
 //considerations
 void delmenu();
@@ -303,6 +298,10 @@ void displayProdResults(buysell arr[], int size, char type) {
 
 int main(){
     setLimeColor();
+    if(start){
+        start = false;
+        welcomescreen();
+    }
     ifstream empty("useradmin.txt");
     if (empty.peek() == ifstream::traits_type::eof()) {
         empty.close();
@@ -327,9 +326,8 @@ int main(){
         cout<<"3. Update Ticket\n";
         cout<<"4. Payment & Request History\n";
         cout<<"5. Buy 'n Sell\n";
-        cout<<"6. Sangla\n";
-        cout<<"7. Settings\n";
-        cout<<"8. Exit\n";
+        cout<<"6. Settings\n";
+        cout<<"7. Exit\n";
         cout<<"Enter your choice: ";
         cin>>choice;
         switch(choice)
@@ -339,9 +337,8 @@ int main(){
             case 3: cupdate(); break;
             case 4: paymenu(); break;
             case 5: buynsell(); break;
-            case 6: sanglaan(); break;
-            case 7: settings(); break;
-            case 8: 
+            case 6: settings(); break;
+            case 7: 
                 cout<< "\nThank you! Exiting..\n";
                 this_thread::sleep_for(chrono::seconds(1));
                 exit(0);
@@ -356,27 +353,42 @@ int main(){
 void welcomescreen() {
     system("CLS");
 
-    int screenWidth = 60;
-    int logoWidth = 14;
+    int screenWidth = 150;
+    int logoWidth = 20;
     int titleWidth = 30;
     int welcomeWidth = 35;
-
-    cout << setw((screenWidth - logoWidth) / 2) << "" << "┌───────┐" << endl;
-    cout << setw((screenWidth - logoWidth) / 2) << "" << "│       │" << endl;
-    cout << setw((screenWidth - logoWidth) / 2) << "" << "│       │" << endl;
-    cout << setw((screenWidth - logoWidth) / 2) << "" << "│   ●   │" << endl;
-    cout << setw((screenWidth - logoWidth) / 2) << "" << "│       │" << endl;
-    cout << setw((screenWidth - logoWidth) / 2) << "" << "│       │" << endl;
-    cout << setw((screenWidth - logoWidth) / 2) << "" << "└───────┘" << endl;
+    cout << "\n\n\n";
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "              ____             " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "             //\\  \\           " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "            //  \\  \\         " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "           //\\   \\  \\       " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "          //  \\   \\  \\     " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "         //    \\   \\  \\   " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "        //      \\   \\  \\ " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "       //        \\   \\ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "      //          \\ / //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "     //            / //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "    //            / //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "   //            / //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "  //            / //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << " /\\            / //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "/  \\          / //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "\\   \\        / //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << " \\   \\      / //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "  \\   \\    / //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "   \\   \\  / //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "    \\   \\/ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "     \\    //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "      -----" << endl;
     cout << endl;
 
     cout << setw((screenWidth - titleWidth) / 2) << "" << "CELLPHONE REPAIR REQUEST SYSTEM" << endl;
     cout << endl;
 
-    cout << setw((screenWidth - welcomeWidth) / 2) << "" << "Welcome to our Cellphone Repair Service" << endl;
+    cout << setw((screenWidth - welcomeWidth) / 2) << "" << "Welcome to Our Cellphone Repair Service" << endl;
     cout << endl;
 
-    this_thread::sleep_for(chrono::seconds(3));
+    this_thread::sleep_for(chrono::seconds(5));
 }
 // save & load file for customer request
 void loadpending()
@@ -575,24 +587,26 @@ void signIn() {
     system("CLS");
     int choice;
 
-    cout << "+----------------------------------------------------+" << endl;
-    cout << "|            CELLPHONE REPAIR REQUEST SYSTEM         |" << endl;
-    cout << "+----------------------------------------------------+" << endl;
-    cout << "| 1. Login                                           |" << endl;
-    cout << "| 2. Forgot Username or Password                     |" << endl;
-    cout << "| Enter your choice: ";
+    cout << "\n\n\n\n\n\n\n\n\n";
+    cout << setw(55) << "" << "+----------------------------------------------------+" << endl;
+    cout << setw(55) << "" << "|            CELLPHONE REPAIR REQUEST SYSTEM         |" << endl;
+    cout << setw(55) << "" << "+----------------------------------------------------+" << endl;
+    cout << setw(55) << "" << "| 1. Login                                           |" << endl;
+    cout << setw(55) << "" << "| 2. Forgot Username or Password                     |" << endl;
+    cout << setw(55) << "" << "| Enter your choice: ";
     cin >> choice;
-    cout << "+----------------------------------------------------+" << endl;
+    cout << setw(50) << "" << "+----------------------------------------------------+" << endl;
 
     switch (choice) {
     case 1: login(); return;
     case 2: forgot(); return;
     default:
         system("CLS");
-        cout << "+----------------------------------------------------+" << endl;
-        cout << "|               Invalid Input                        |" << endl;
-        cout << "+----------------------------------------------------+" << endl;
-        this_thread::sleep_for(chrono::seconds(2));
+        cout << "\n\n\n\n\n\n\n\n\n";
+        cout << setw(55) << "" << "+----------------------------------------------------+" << endl;
+        cout << setw(55) << "" << "|               Invalid Input                        |" << endl;
+        cout << setw(55) << "" << "+----------------------------------------------------+" << endl;
+        this_thread::sleep_for(chrono::seconds(1));
         signIn();
     }
 }
@@ -603,16 +617,17 @@ void login() {
 
     while (true) {
         system("CLS");
-        cout << "+---------------------------+" << endl;
-        cout << "|        Login Menu         |" << endl;
-        cout << "+---------------------------+" << endl;
-        cout << "| Enter your username:      |" << endl;
-        cout << "| > ";
+        cout << "\n\n\n\n\n\n\n\n\n";
+        cout << setw(65) << "" << "+---------------------------+" << endl;
+        cout << setw(65) << "" << "|        Login Menu         |" << endl;
+        cout << setw(65) << "" << "+---------------------------+" << endl;
+        cout << setw(65) << "" << "| Enter your username:      |" << endl;
+        cout << setw(65) << "" << "| > ";
         cin >> user;
-        cout << "| Enter your password:      |" << endl;
-        cout << "| > ";
+        cout << setw(65) << "" << "| Enter your password:      |" << endl;
+        cout << setw(65) << "" << "| > ";
         pass = getPassword();
-        cout << "+---------------------------+" << endl;
+        cout << setw(65) << "" << "+---------------------------+" << endl;
 
         ifstream input("useradmin.txt");
         while (input >> signup[0][0] >> signup[0][1] >> signup[0][2] >> signup[0][3]) {
@@ -625,192 +640,288 @@ void login() {
 
         if (found == true) {
             sign = true;
-            cout << "+---------------------------+" << endl;
-            cout << "|     LOGIN SUCCESSFUL!     |" << endl;
-            cout << "|     Hello, " << left << setw(10) << user << "|" << endl;
-            cout << "+---------------------------+" << endl;
+            cout << "\n\n\n\n\n\n\n\n\n";
+            cout << setw(65) << "" << "+---------------------------+" << endl;
+            cout << setw(65) << "" << "|     LOGIN SUCCESSFUL!     |" << endl;
+            cout << setw(65) << "" << "|     Hello, " << left << setw(14) << user << "|" << endl;
+            cout << setw(65) << "" << "+---------------------------+" << endl;
             this_thread::sleep_for(chrono::seconds(3));
             main();
         } else if (count == 5) {
-            cout << "+---------------------------+" << endl;
-            cout << "|   Too many attempts!      |" << endl;
-            cout << "|    Exiting the program... |" << endl;
-            cout << "+---------------------------+" << endl;
+            cout << "\n\n\n\n\n\n\n\n\n";
+            cout << setw(65) << "" << "+---------------------------+" << endl;
+            cout << setw(65) << "" << "|   Too many attempts!      |" << endl;
+            cout << setw(65) << "" << "|    Exiting the program... |" << endl;
+            cout << setw(65) << "" << "+---------------------------+" << endl;
             this_thread::sleep_for(chrono::seconds(2));
             exit(0);
         } else {
-            cout << "+---------------------------+" << endl;
-            cout << "| Invalid Username or       |" << endl;
-            cout << "| Password. Please try      |" << endl;
-            cout << "| again.                    |" << endl;
-            cout << "+---------------------------+" << endl;
+            cout << "\n\n\n\n\n\n\n\n\n";
+            cout << setw(65) << "" << "+---------------------------+" << endl;
+            cout << setw(65) << "" << "| Invalid Username or       |" << endl;
+            cout << setw(65) << "" << "| Password. Please try      |" << endl;
+            cout << setw(65) << "" << "| again.                    |" << endl;
+            cout << setw(65) << "" << "+---------------------------+" << endl;
             this_thread::sleep_for(chrono::seconds(2));
             count++;
         }
     }
 }
-void regis(){
-    welcomescreen();
+void regis() {
     string conpass;
     system("CLS");
-    cout << "Note: Think throughly for credentials you have to input\n\n";
-    cout << "Enter the Username: ";
+
+    cout << endl << endl << endl;
+    cout << setw(60) << "" << "+---------------------------------------+" << endl;
+    cout << setw(60) << "" << "|           User Registration           |" << endl;
+    cout << setw(60) << "" << "+---------------------------------------+" << endl;
+    cout << setw(60) << "" << "| Please register before you use the    |" << endl;
+    cout << setw(60) << "" << "| system.                               |" << endl;
+    cout << setw(60) << "" << "|                                       |" << endl;
+    cout << setw(60) << "" << "| Note: Think thoroughly for the        |" << endl;
+    cout << setw(60) << "" << "| credentials you have to input.        |" << endl;
+    cout << setw(60) << "" << "+-------------------------------------- +" << endl;
+    cout << endl << endl;
+
+    cout << setw(60) << "" << "Enter the Username: ";
     cin >> signup[0][0];
-    while(true){
-        cout << "Enter the Password: ";
-        signup[0][1]=getPassword();
-        cout << "Confirm Password: ";
-        conpass=getPassword();
-        if (signup[0][1]!=conpass){
-            cout << "Password and Confirm Password Doesnt Match\n";
+    cout << endl;
+
+    while (true) {
+        cout << setw(60) << "" << "Enter the Password: ";
+        signup[0][1] = getPassword();
+        cout << endl;
+        cout << setw(60) << "" << "Confirm Password: ";
+        conpass = getPassword();
+        cout << endl;
+        if (signup[0][1] != conpass) {
+            cout << setw(60) << "" << "Password and Confirm Password Don't Match" << endl << endl;
         }
-        else{
+        else {
             break;
         }
     }
-    cout << "Security Question 1: What is your mother's maiden name?" << endl;
-    cout << "Answer: ";
+
+    cout << setw(60) << "" << "Security Question 1: What is your mother's maiden name?\n";
+    cout << setw(60) << "" << "Answer: ";
     cin >> signup[0][2];
-    cout << "Security Question 2: What was the name of your first pet?" << endl;
-    cout << "Answer: ";
+    cout << endl;
+    cout << setw(60) << "" << "Security Question 2: What was the name of your first pet?\n";
+    cout << setw(60) << "" << "Answer: ";
     cin >> signup[0][3];
-    
+
     ofstream reg("useradmin.txt", ios::app);
     reg << signup[0][0] << " " << signup[0][1] << " " << signup[0][2] << " " << signup[0][3] << endl;
     system("CLS");
-    cout << "\nRegistration Successful." << endl;
+    cout << "\n\n\n\n\n";
+    cout << setw(60) << "" << "Registration Successful." << endl;
     reg.close();
     this_thread::sleep_for(chrono::seconds(2));
     main();
-    
 }
-void forgot()
-{
-        int ch;
-        system("cls");
-        cout<<"Forgot?\n";
-        cout<<"1.Search by Username"<<endl;
-        cout<<"2.Search by Password"<<endl;
-        cout<<"3.Main menu"<<endl;
-        cout<<"Enter your choice :";
-        cin>>ch;
-        switch(ch)
-        {
-                case 1:
-                {
-                    string susername, securityAns1, securityAns2;
-                    cout << "Enter remembered username: ";
-                    cin >> susername;
+void forgot() {
+    int ch;
+    system("CLS");
 
-                    ifstream check("useradmin.txt");
-                    bool found = false;
+    cout << "\n\n\n\n\n\n\n\n\n";
+    cout << setw(65) << "" << "+---------------------------+" << endl;
+    cout << setw(65) << "" << "|         Forgot Menu       |" << endl;
+    cout << setw(65) << "" << "+---------------------------+" << endl;
+    cout << setw(65) << "" << "| 1. Search by Username     |" << endl;
+    cout << setw(65) << "" << "| 2. Search by Password     |" << endl;
+    cout << setw(65) << "" << "| 3. Main Menu              |" << endl;
+    cout << setw(65) << "" << "+---------------------------+" << endl;
+    cout << setw(65) << "" << "| Enter your choice:        |" << endl;
+    cout << setw(65) << "" << "| > ";
+    cin >> ch;
+    cout << setw(65) << "" << "+---------------------------+" << endl;
 
-                    while (check >> signup[0][0] >> signup[0][1] >> signup[0][2] >> signup[0][3]) {
-                        if (signup[0][0] == susername) {
-                            found = true;
-                            cout<< "Answer the following questions" << endl;
-                            cout << "What is your mother's maiden name?: ";
-                            cin >> securityAns1;
-                            cout << "What was the name of your first pet?: ";
-                            cin >> securityAns2;
-
-                            if (securityAns1 == signup[0][2] && securityAns2 == signup[0][3]) {
-                                cout << "\nAccount recovered!\nYour password is: " << signup[0][1] << endl;
-                                updateadmin();
-                                
-                            } else {
-                                cout << "Security answers do not match. Recovery failed." << endl;
-                            }
-                            break;
-                        }
-                    }
-                    check.close();
-
-                    if (!found) {
-                        cout << "Username not found in the database." << endl;
-                    }
-
-                    this_thread::sleep_for(chrono::seconds(3));
-                    signIn();
-                    return;
-                }
-                case 2:
-                {
-                    string spassword, securityAns1, securityAns2;
-                    cout << "Enter remembered password: ";
-                    cin >> spassword;
-
-                    ifstream check("useradmin.txt");
-                    bool found = false;
-
-                    while (check >> signup[0][0] >> signup[0][1] >> signup[0][2] >> signup[0][3]) {
-                        if (signup[0][1] == spassword) {
-                            found = true;
-                            cout<< "Answer the following questions" << endl;
-                            cout << "What is your mother's maiden name?: ";
-                            cin >> securityAns1;
-                            cout << "What was the name of your first pet?: ";
-                            cin >> securityAns2;
-
-                            if (securityAns1 == signup[0][2] && securityAns2 == signup[0][3]) {
-                                cout << "\nAccount recovered!\nYour Username is: " << signup[0][0] << endl;
-                                updateadmin();
-                            } else {
-                                cout << "Security answers do not match. Recovery failed." << endl;
-                            }
-                            break;
-                        }
-                    }
-                    check.close();
-
-                    if (!found) {
-                        cout << "Password not found in the database." << endl;
-                    }
-
-                    this_thread::sleep_for(chrono::seconds(3));
-                    signIn();
-                    return;
-                }
-
-                case 3:
-                {
-                    signIn();
-                    return;
-                }
-                default:
-                    cout<<"Invalid Input. Kindly try again"<<endl;
-                    this_thread::sleep_for(chrono::seconds(3));
-                    forgot();
-        }
-}
-void updateadmin(){
-    char a;
-    while(true){
-        cout << "Do you want to update your account? [y] YES or [n] NO :";
-        cin >> a;
-        if(a == 'y'|| a == 'Y'){
-            int choice;
+    switch (ch) {
+        case 1: {
+            string susername, securityAns1, securityAns2;
             system("CLS");
-            while(true){
-                cout<<"*********************************"<<endl;
-                cout<<"Please select an option: \n";
-                cout<<"1. Update Username\n";
-                cout<<"2. Update Password\n";
-                cout<<"3. Update All\n";
-                cout<<"4. Go back\n";
-                cout<<"Enter your choice: ";
-                cin>>choice;
-                switch(choice)
-                {
-                    case 1:
-                    {
+
+            cout << "\n\n\n\n\n\n\n\n\n";
+            cout << setw(65) << "" << "+---------------------------+" << endl;
+            cout << setw(65) << "" << "| Enter remembered username |" << endl;
+            cout << setw(65) << "" << "| > ";
+            cin >> susername;
+            cout << setw(65) << "" << "+---------------------------+" << endl;
+
+            ifstream check("useradmin.txt");
+            bool found = false;
+
+            while (check >> signup[0][0] >> signup[0][1] >> signup[0][2] >> signup[0][3]) {
+                if (signup[0][0] == susername) {
+                    found = true;
+                    cout << "\n\n\n";
+                    cout << setw(65) << "" << "+---------------------------+" << endl;
+                    cout << setw(65) << "" << "| Answer the following      |" << endl;
+                    cout << setw(65) << "" << "| security questions:       |" << endl;
+                    cout << setw(65) << "" << "+---------------------------+" << endl;
+                    cout << setw(65) << "" << "| What is your mother's     |" << endl;
+                    cout << setw(65) << "" << "| maiden name?:             |" << endl;
+                    cout << setw(65) << "" << "| > ";
+                    cin >> securityAns1;
+                    cout << setw(65) << "" << "| What was the name of      |" << endl;
+                    cout << setw(65) << "" << "| your first pet?:          |" << endl;
+                    cout << setw(65) << "" << "| > ";
+                    cin >> securityAns2;
+                    cout << setw(65) << "" << "+---------------------------+" << endl;
+
+                    if (securityAns1 == signup[0][2] && securityAns2 == signup[0][3]) {
+                        cout << "\n\n";
+                        cout << setw(65) << "" << "+---------------------------------+" << endl;
+                        cout << setw(65) << "" << "| Account recovered!              |" << endl;
+                        cout << setw(65) << "" << "| Your password is: " << signup[0][1] << setw(8) << " |" << endl;
+                        cout << setw(65) << "" << "+---------------------------------+" << endl;
+                        updateadmin();
+                    } else {
+                        cout << "\n\n";
+                        cout << setw(65) << "" << "+---------------------------+" << endl;
+                        cout << setw(65) << "" << "| Security answers do not   |" << endl;
+                        cout << setw(65) << "" << "| match. Recovery failed.   |" << endl;
+                        cout << setw(65) << "" << "+---------------------------+" << endl;
+                    }
+                    break;
+                }
+            }
+            check.close();
+
+            if (!found) {
+                cout << "\n\n";
+                cout << setw(65) << "" << "+---------------------------+" << endl;
+                cout << setw(65) << "" << "| Username not found in     |" << endl;
+                cout << setw(65) << "" << "| the database.             |" << endl;
+                cout << setw(65) << "" << "+---------------------------+" << endl;
+            }
+
+            this_thread::sleep_for(chrono::seconds(3));
+            signIn();
+            return;
+        }
+        case 2: {
+            string spassword, securityAns1, securityAns2;
+            system("CLS");
+
+            cout << "\n\n\n\n\n\n\n\n\n";
+            cout << setw(65) << "" << "+---------------------------+" << endl;
+            cout << setw(65) << "" << "| Enter remembered password |" << endl;
+            cout << setw(65) << "" << "| > ";
+            cin >> spassword;
+            cout << setw(65) << "" << "+---------------------------+" << endl;
+
+            ifstream check("useradmin.txt");
+            bool found = false;
+
+            while (check >> signup[0][0] >> signup[0][1] >> signup[0][2] >> signup[0][3]) {
+                if (signup[0][1] == spassword) {
+                    found = true;
+                    cout << "\n\n\n";
+                    cout << setw(65) << "" << "+---------------------------+" << endl;
+                    cout << setw(65) << "" << "| Answer the following      |" << endl;
+                    cout << setw(65) << "" << "| security questions:       |" << endl;
+                    cout << setw(65) << "" << "+---------------------------+" << endl;
+                    cout << setw(65) << "" << "| What is your mother's     |" << endl;
+                    cout << setw(65) << "" << "| maiden name?:             |" << endl;
+                    cout << setw(65) << "" << "| > ";
+                    cin >> securityAns1;
+                    cout << setw(65) << "" << "| What was the name of      |" << endl;
+                    cout << setw(65) << "" << "| your first pet?:          |" << endl;
+                    cout << setw(65) << "" << "| > ";
+                    cin >> securityAns2;
+                    cout << setw(65) << "" << "+---------------------------+" << endl;
+
+                    if (securityAns1 == signup[0][2] && securityAns2 == signup[0][3]) {
+                        cout << "\n\n\n";
+                        cout << setw(65) << "" << "+--------------------------------+" << endl;
+                        cout << setw(65) << "" << "| Account recovered!             |" << endl;
+                        cout << setw(65) << "" << "| Your Username is: " << signup[0][0] << setw(7) << " |" << endl;
+                        cout << setw(65) << "" << "+--------------------------------+" << endl;
+                        updateadmin();
+                    } else {
+                        cout << "\n\n";
+                        cout << setw(65) << "" << "+---------------------------+" << endl;
+                        cout << setw(65) << "" << "| Security answers do not   |" << endl;
+                        cout << setw(65) << "" << "| match. Recovery failed.   |" << endl;
+                        cout << setw(65) << "" << "+---------------------------+" << endl;
+                    }
+                    break;
+                }
+            }
+            check.close();
+
+            if (!found) {
+                cout << "\n\n";
+                cout << setw(65) << "" << "+---------------------------+" << endl;
+                cout << setw(65) << "" << "| Password not found in     |" << endl;
+                cout << setw(65) << "" << "| the database.             |" << endl;
+                cout << setw(65) << "" << "+---------------------------+" << endl;
+            }
+
+            this_thread::sleep_for(chrono::seconds(3));
+            signIn();
+            return;
+        }
+        case 3: {
+            signIn();
+            return;
+        }
+        default: {
+            cout << "\n\n";
+            cout << setw(65) << "" << "+---------------------------+" << endl;
+            cout << setw(65) << "" << "| Invalid Input. Kindly     |" << endl;
+            cout << setw(65) << "" << "| try again.                |" << endl;
+            cout << setw(65) << "" << "+---------------------------+" << endl;
+            this_thread::sleep_for(chrono::seconds(3));
+            forgot();
+        }
+    }
+}
+void updateadmin() {
+    char a;
+    while (true) {
+        system("CLS");
+
+        cout << "\n\n\n\n\n\n\n\n\n";
+        cout << setw(65) << "" << "+--------------------------------+" << endl;
+        cout << setw(65) << "" << "| Do you want to update your     |" << endl;
+        cout << setw(65) << "" << "| account? [y] YES or [n] NO     |" << endl;
+        cout << setw(65) << "" << "| > ";
+        cin >> a;
+        cout << setw(65) << "" << "+--------------------------------+" << endl;
+
+        if (a == 'y' || a == 'Y') {
+            int choice;
+            while (true) {
+                system("CLS");
+
+                cout << "\n\n\n\n\n\n\n\n\n";
+                cout << setw(65) << "" << "+--------------------------------+" << endl;
+                cout << setw(65) << "" << "|        Update Account Menu     |" << endl;
+                cout << setw(65) << "" << "+--------------------------------+" << endl;
+                cout << setw(65) << "" << "| 1. Update Username             |" << endl;
+                cout << setw(65) << "" << "| 2. Update Password             |" << endl;
+                cout << setw(65) << "" << "| 3. Update All                  |" << endl;
+                cout << setw(65) << "" << "| 4. Go back                     |" << endl;
+                cout << setw(65) << "" << "+--------------------------------+" << endl;
+                cout << setw(65) << "" << "| Enter your choice:             |" << endl;
+                cout << setw(65) << "" << "| > ";
+                cin >> choice;
+                cout << setw(65) << "" << "+--------------------------------+" << endl;
+
+                switch (choice) {
+                    case 1: {
                         ifstream file("useradmin.txt");
                         string line, updateline;
 
                         // Read the first line
                         getline(file, line);
 
-                        cout << "Enter Updated Username: ";
+                        cout << "\n\n\n";
+                        cout << setw(65) << "" << "+--------------------------------+" << endl;
+                        cout << setw(65) << "" << "| Enter Updated Username:        |" << endl;
+                        cout << setw(65) << "" << "| > ";
                         cin >> signup[0][0];
                         updateline = signup[0][0] + " " + signup[0][1] + " " + signup[0][2] + " " + signup[0][3];
 
@@ -818,87 +929,125 @@ void updateadmin(){
                         reg << updateline << endl;
 
                         system("CLS");
-                        cout << "\nUsername Updated Successfully." << endl;
+                        cout << "\n\n\n\n\n\n";
+                        cout << setw(65) << "" << "+--------------------------------+" << endl;
+                        cout << setw(65) << "" << "| Username Updated Successfully  |" << endl;
+                        cout << setw(65) << "" << "+--------------------------------+" << endl;
                         reg.close();
                         this_thread::sleep_for(chrono::seconds(2));
                         main();
                         return;
                     }
-                    case 2:
-                    {
+                    case 2: {
                         string conpass, line, updateline;
-                        while(true){
-                            cout << "Enter Updated Password: ";
-                            signup[0][1]=getPassword();
-                            cout << "Confirm Updated Password: ";
-                            conpass=getPassword();
-                            if(signup[0][1]!=conpass){
-                                cout << "Password and Confirm Password Doesnt Match.\n";
-                            }
-                            else{
+                        while (true) {
+                            cout << "\n\n\n";
+                            cout << setw(65) << "" << "+--------------------------------+" << endl;
+                            cout << setw(65) << "" << "| Enter Updated Password:        |" << endl;
+                            cout << setw(65) << "" << "| > ";
+                            signup[0][1] = getPassword();
+                            cout << setw(65) << "" << "| Confirm Updated Password:      |" << endl;
+                            cout << setw(65) << "" << "| > ";
+                            conpass = getPassword();
+                            cout << setw(65) << "" << "+--------------------------------+" << endl;
+
+                            if (signup[0][1] != conpass) {
+                                cout << "\n\n";
+                                cout << setw(65) << "" << "+--------------------------------+" << endl;
+                                cout << setw(65) << "" << "| Passwords do not match.        |" << endl;
+                                cout << setw(65) << "" << "| Please try again.              |" << endl;
+                                cout << setw(65) << "" << "+--------------------------------+" << endl;
+                                cout << endl << endl;
+                                this_thread::sleep_for(chrono::seconds(2));
+                            } else {
                                 break;
                             }
                         }
                         ifstream file("useradmin.txt");
-                        getline(file, line); 
+                        getline(file, line);
                         updateline = signup[0][0] + " " + signup[0][1] + " " + signup[0][2] + " " + signup[0][3];
 
                         ofstream reg("useradmin.txt", ios::trunc);
                         reg << updateline << endl;
                         system("CLS");
-                        cout << "\nPassword Updated Successfully." << endl;
+                        cout << "\n\n\n\n\n";
+                        cout << setw(65) << "" << "+--------------------------------+" << endl;
+                        cout << setw(65) << "" << "| Password Updated Successfully  |" << endl;
+                        cout << setw(65) << "" << "+--------------------------------+" << endl;
                         reg.close();
                         this_thread::sleep_for(chrono::seconds(2));
                         main();
                         return;
                     }
-                    case 3:
-                    {
+                    case 3: {
                         string conpass, line, updateline;
-                        cout << "Enter Updated Username: ";
+                        cout << "\n\n\n";
+                        cout << setw(65) << "" << "+--------------------------------+" << endl;
+                        cout << setw(65) << "" << "| Enter Updated Username:        |" << endl;
+                        cout << setw(65) << "" << "| > ";
                         cin >> signup[0][0];
-                        while(true){
-                            cout << "Enter Updated Password: ";
-                            signup[0][1]=getPassword();
-                            cout << "Confirm Updated Password: ";
-                            conpass=getPassword();
-                            if(signup[0][1]!=conpass){
-                                cout << "Password and Confirm Password Doesnt Match.\n";
-                            }
-                            else{
+                        while (true) {
+                            cout << setw(65) << "" << "| Enter Updated Password:        |" << endl;
+                            cout << setw(65) << "" << "| > ";
+                            signup[0][1] = getPassword();
+                            cout << setw(65) << "" << "| Confirm Updated Password:      |" << endl;
+                            cout << setw(65) << "" << "| > ";
+                            conpass = getPassword();
+                            cout << setw(65) << "" << "+--------------------------------+" << endl;
+
+                            if (signup[0][1] != conpass) {
+                                cout << "\n\n";
+                                cout << setw(65) << "" << "+--------------------------------+" << endl;
+                                cout << setw(65) << "" << "| Passwords do not match.        |" << endl;
+                                cout << setw(65) << "" << "| Please try again.              |" << endl;
+                                cout << setw(65) << "" << "+--------------------------------+" << endl;
+                                cout << endl << endl;
+                                this_thread::sleep_for(chrono::seconds(2));
+                            } else {
                                 break;
                             }
                         }
                         ifstream file("useradmin.txt");
-                        getline(file, line); 
+                        getline(file, line);
                         updateline = signup[0][0] + " " + signup[0][1] + " " + signup[0][2] + " " + signup[0][3];
 
                         ofstream reg("useradmin.txt");
                         reg << updateline << endl;
                         system("CLS");
-                        cout << "\nAccount Updated Successfully." << endl;
+                        cout << "\n\n\n\n\n\n\n";
+                        cout << setw(65) << "" << "+--------------------------------+" << endl;
+                        cout << setw(65) << "" << "| Account Updated Successfully   |" << endl;
+                        cout << setw(65) << "" << "+--------------------------------+" << endl;
                         reg.close();
                         this_thread::sleep_for(chrono::seconds(2));
                         main();
                         return;
                     }
-                    case 4: main(); return;
-                    default:
-                        cout << "Invalid choice!" << endl;
+                    case 4: {
+                        main();
+                        return;
+                    }
+                    default: {
+                        cout << "\n\n";
+                        cout << setw(65) << "" << "+--------------------------------+" << endl;
+                        cout << setw(65) << "" << "| Invalid choice!                |" << endl;
+                        cout << setw(65) << "" << "+--------------------------------+" << endl;
                         this_thread::sleep_for(chrono::seconds(1));
+                    }
                 }
             }
             break;
-        }
-        else if (a == 'n' || a == 'N'){
-            main(); return;
-        }
-        else{
-            cout << "Invalid Choice\n";
+        } else if (a == 'n' || a == 'N') {
+            main();
+            return;
+        } else {
+            cout << "\n\n";
+            cout << setw(65) << "" << "+--------------------------------+" << endl;
+            cout << setw(65) << "" << "| Invalid Choice                 |" << endl;
+            cout << setw(65) << "" << "+--------------------------------+" << endl;
+            this_thread::sleep_for(chrono::seconds(2));
         }
     }
-
-    
 }
 void settings(){
     int count = 0, max = 5;
@@ -1900,63 +2049,6 @@ void displaySold(buysell arr[], int size, int* indexes, int numResults){
     cin.get();
     cin.get();
 }
-//sangla section
-void sanglamenu(){
-    while(true){
-        system("CLS");
-        int choice = 0;
-        cout<<"********************************************"<<endl;
-        cout<<"Please select an option: \n";
-        cout<<"1. Sangla\n";
-        cout<<"2. Sangla History\n";
-        cout<<"3. Go Back\n";
-        cout<<"Enter your choice: ";
-        cin>>choice;
-        switch(choice){
-            case 1: sanglaan(); return;
-            case 2: sanglahistory(); return;
-            case 3: main(); return;
-            default:
-                cout << "Invalid choice!" << endl;
-                this_thread::sleep_for(chrono::seconds(1));
-        }
-    }
-}
-void sanglaan(){
-    char type = 'b';
-    system("CLS");
-    cout<<"Sangla"<<endl;
-    cout<<"Please Provide the Following details"<<endl;
-    cout<<"Brand: ";
-    getline(cin >> ws, bns[bid].brand);
-    cout<<"Device Type: ";
-    getline(cin >> ws, bns[bid].dtype);
-    cout<<"Model: ";
-    getline(cin>>ws, bns[bid].model);
-    cout<<"Color: ";
-    getline(cin>>ws, bns[bid].color);
-    cout<<"Display/Resolution: ";
-    getline(cin>>ws, bns[bid].display);
-    cout<<"Camera: ";
-    getline(cin>>ws, bns[bid].cam);
-    cout<<"Storage: ";
-    getline(cin>>ws, bns[bid].storage);
-    cout<<"Processor: ";
-    getline(cin>>ws, bns[bid].cpu);
-    cout<<"RAM: ";
-    getline(cin>>ws, bns[bid].ram);
-    cout<<"Price: ";
-    cin>>bns[bid].price;
-    bns[bid].status = "Available";
-    bid++;
-    save(type);
-    cout<<"\nProduct Added!\n"<<endl;
-    this_thread::sleep_for(chrono::seconds(3));
-    buynsell();
-}
-void sanglahistory(){
-
-}
 //request payment section
 void paymenu(){
     while(true){
@@ -2162,7 +2254,7 @@ void viewcomplete(){
     cout << "| " << left << setw(3) << "ID" << " | " << setw(30) << "Customer Name" << " | "
          << setw(13) << "Contact No." << " | " << setw(13) << "Device Type" << " | "
          << setw(13) << "Brand" << " | " << setw(18) << "Model" << " | " << setw(30) << "Issue" << " | "
-         << setw(9) << "Status" << " | " << setw(13) << "Price" << " | " << setw(10) << "Date" << " | "
+         << setw(9) << "Status" << " | " << setw(13) << "Rate" << " | " << setw(10) << "Date" << " | "
          << setw(8) << "Time" << " |\n";
          
     cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
@@ -2208,7 +2300,6 @@ void viewcomplete(){
 
                 system("CLS");
                 
-
                 switch (opt) {
                 case 1: searchByDeviceType(complete, comid, type);
                         break;
