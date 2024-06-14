@@ -6,7 +6,8 @@
 #include <ctime>
 #include <iomanip> //design
 #include <sstream> //converting string to int in filestream
-#include <conio.h>
+#include <conio.h> //hashpassword
+#include <vector> //storing searches ps: trying to use 
 
 using namespace std;
 
@@ -20,7 +21,7 @@ struct buysell{
     int price;
 };
 
-//arrays
+//arrays & vectors
 string signup[1][4];//admin
 
 request cellphone[100];
@@ -32,11 +33,15 @@ buysell sold[100];
 
 buysell sangla[100];
 
+vector<int> indexes;
+vector<request> searchResults;
+
 //utilities & id/counter
 int id = 0, canid = 0, comid = 0;
 int bid = 0, sid = 0;
 
 bool sign = false;
+
 
 //current time function
 string getCurrentDateTime(const char* format) {
@@ -166,6 +171,7 @@ void computeRate(int index, char type){
     }
     
 }
+//color
 void setLimeColor() {
     cout << "\033[1;92m"; // Set the text color to lime
 }
@@ -214,7 +220,43 @@ void sanglahistory();
 void delmenu();
 void specdel();
 void alldel();
+//search & sort
+void searchByBrand(request arr[], int size, char type);
+void searchByDeviceType(request arr[], int size, char type);
+void searchByModel(request arr[], int size, char type);
+void searchByIssue(request arr[], int size, char type);
+void searchByDate(request arr[], int size, char type);
+void displayRequest(request arr[], int size, int* indexes, int numResults);
+void displayComplete(request arr[], int size, int* indexes, int numResults);
+void displaySearchResults(request arr[], int size, char type) {
+    if (searchResults.empty()) {
+        cout << "No results found." << endl;
+        this_thread::sleep_for(chrono::seconds(1));
+        if (type == 'a'){
+            cview();
+        }else if (type == 'b'){
+            viewcancel();
+        }
+        else if (type == 'c'){
+            viewcomplete();
+        }
+        
+        return;
+    }
 
+    cout << "Search Results:" << endl;
+    if (type == 'a' || type == 'b'){
+        displayRequest(arr, size, indexes.data(), indexes.size());
+        searchResults.clear();
+        indexes.clear();
+    }
+    else if(type == 'c'){
+        displayComplete(arr, size, indexes.data(), indexes.size());
+        searchResults.clear();
+        indexes.clear();
+    }
+    
+}
 
 int main(){
     setLimeColor();
@@ -991,20 +1033,148 @@ void displayselect(int index, char dis) {
             << string(10, '-') << "+" << string(10, '-') << "+" << string(20, '-') << "+" 
             << string(9, '-') << "+" << string(17, '-') << "+" << string(17, '-') << "+\n";
     }
-
-         
     
 }
-void cview(){
-    loadpending(); 
-	system("CLS");
-	cout<<"Request:"<<endl;
-	displaycustomer();
-    cout<<endl;
-    cout<<"Press Enter to go back\n";
+void displayRequest(request arr[], int size, int* indexes, int numResults){
+    // Table header
+    cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+         << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
+         << string(32, '-') << "+" << string(15, '-') << "+" << string(12, '-') << "+"
+         << string(10, '-') << "+\n";
+
+    cout << "| " << left << setw(3) << "ID" << " | " << setw(30) << "Customer Name" << " | "
+         << setw(13) << "Contact No." << " | " << setw(13) << "Device Type" << " | "
+         << setw(13) << "Brand" << " | " << setw(18) << "Model" << " | " << setw(30) << "Issue" << " | "
+         << setw(13) << "Status" << " | " << setw(10) << "Date" << " | "
+         << setw(8) << "Time" << " |\n";
+
+    cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+         << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
+         << string(32, '-') << "+" << string(15, '-') << "+" << string(12, '-') << "+"
+         << string(10, '-') << "+\n";
+
+    // Table rows
+     for (int i = 0; i < numResults; i++) {
+        int index = indexes[i];
+        const request& r = arr[index];
+        cout << "| " << setw(3) << left << index+1 << " | " 
+             << setw(30) << r.cname << " | "
+             << setw(13) << r.cnum << " | "
+             << setw(13) << r.dtype << " | "
+             << setw(13) << r.brand << " | "
+             << setw(18) << r.model << " | "
+             << setw(30) << r.issue << " | "
+             << setw(13) << r.status << " | "
+             << setw(10) << r.date << " | "
+             << setw(8) << r.time << " |\n";
+             
+        cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+             << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
+             << string(32, '-') << "+" << string(15, '-') << "+" << string(12, '-') << "+"
+             << string(10, '-') << "+\n";
+    }
+    cout << "\nPress Enter to continue: " << endl;
+    cin.get();
+}
+void displayComplete(request arr[], int size, int* indexes, int numResults){
+    // Table header
+    cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+         << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
+         << string(32, '-') << "+" << string(11, '-') << "+" << string(15, '-') << "+" 
+         << string(12, '-') << "+" << string(10, '-') << "+\n";
+         
+    cout << "| " << left << setw(3) << "ID" << " | " << setw(30) << "Customer Name" << " | "
+         << setw(13) << "Contact No." << " | " << setw(13) << "Device Type" << " | "
+         << setw(13) << "Brand" << " | " << setw(18) << "Model" << " | " << setw(30) << "Issue" << " | "
+         << setw(9) << "Status" << " | " << setw(13) << "Price" << " | " << setw(10) << "Date" << " | "
+         << setw(8) << "Time" << " |\n";
+         
+    cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+         << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
+         << string(32, '-') << "+" << string(11, '-') << "+" << string(15, '-') << "+" 
+         << string(12, '-') << "+" << string(10, '-') << "+\n";
+    
+    // Table rows
+    for (int i = 0; i < numResults; i++) {
+        int index = indexes[i];
+        const request& r = arr[index];
+        cout << "| " << setw(3) << left << index+1 << " | " 
+             << setw(30) << r.cname << " | "
+             << setw(13) << r.cnum << " | "
+             << setw(13) << r.dtype << " | "
+             << setw(13) << r.brand << " | "
+             << setw(18) << r.model << " | "
+             << setw(30) << r.issue << " | "
+             << setw(9) << r.status << " | "
+             << setw(2) << "PHP " << setw(9)<< r.rate << " | "
+             << setw(10) << r.date << " | "
+             << setw(8) << r.time << " |\n";
+             
+        cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+            << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
+            << string(32, '-') << "+" << string(11, '-') << "+" << string(15, '-') << "+" 
+            << string(12, '-') << "+" << string(10, '-') << "+\n";
+    }
+    cout << "\nPress Enter to continue: " << endl;
+    cin.get();
+}
+void cview() {
+    char a, type='a';
+    loadpending();
+    system("CLS");
+    cout << "Request:" << endl;
+    displaycustomer();
+    while(true){
+        cout << "Do you want to search? [y] YES or [N] NO:  ";
+        cin>>a;
+        if(a == 'y'|| a == 'Y'){
+            int opt;
+            do {
+                cout << "Search requests by:" << endl;
+                cout << "1. Device Type" << endl;
+                cout << "2. Brand" << endl;
+                cout << "3. Model" << endl;
+                cout << "4. Issue" << endl;
+                cout << "5. Date" << endl;
+                cout << "6. Go Back" << endl;
+                cout << "Enter your choice: ";
+                cin >> opt;
+
+                system("CLS");
+                
+
+                switch (opt) {
+                case 1: searchByDeviceType(cellphone, id, type);
+                        break;
+                case 2: searchByBrand(cellphone, id, type);
+                        break;
+                case 3: searchByModel(cellphone, id, type);
+                        break;
+                case 4: searchByIssue(cellphone, id, type);
+                        break;
+                case 5: searchByDate(cellphone, id, type);
+                        break;
+                case 6: cview(); return;
+                default:
+                    cout << "Invalid input. Please try again." << endl;
+                    continue;
+                }
+
+            } while (true);
+        }
+        else if(a == 'n' || a == 'N'){
+            break;
+        }
+        else{
+            cout << "Invalid Input\n";
+        }
+    }
+    cout << endl;
+    cout << "Press Enter to Exit" << endl;
     cin.get();
     cin.get();
-	main();
+    main();
+    
 }
 void cupdate()
 {
@@ -1599,6 +1769,7 @@ void collect(){
 void viewcancel(){
     loadcancel(); 
 	system("CLS");
+    cout<<"Cancelled Request: \n";
     // Table header
     cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
          << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
@@ -1634,15 +1805,64 @@ void viewcancel(){
              << string(32, '-') << "+" << string(15, '-') << "+" << string(12, '-') << "+"
              << string(10, '-') << "+\n";
     }
-    cout<<endl;
-    cout<<"Press Enter to go back\n";
+    char a, type = 'b';
+    while(true){
+        cout << "Do you want to search? [y] YES or [N] NO:  ";
+        cin>>a;
+        if(a == 'y'|| a == 'Y'){
+            int opt;
+            do {
+                cout << "Search cancelled requests by:" << endl;
+                cout << "1. Device Type" << endl;
+                cout << "2. Brand" << endl;
+                cout << "3. Model" << endl;
+                cout << "4. Issue" << endl;
+                cout << "5. Date" << endl;
+                cout << "6. Go Back" << endl;
+                cout << "Enter your choice: ";
+                cin >> opt;
+
+                system("CLS");
+                
+
+                switch (opt) {
+                case 1: searchByDeviceType(cancel, canid, type);
+                        break;
+                case 2: searchByBrand(cancel, canid, type);
+                        break;
+                case 3: searchByModel(cancel, canid, type);
+                        break;
+                case 4: searchByIssue(cancel, canid, type);
+                        break;
+                case 5: searchByDate(cancel, canid, type);
+                        break;
+                case 6: viewcancel();
+                        return;
+                default:
+                    cout << "Invalid input. Please try again." << endl;
+                    continue;
+                }
+
+            } while (true);
+            break;
+        }
+        else if(a == 'n' || a == 'N'){
+            break;
+        }
+        else{
+            cout << "Invalid Input\n";
+        }
+    }
+    cout << "\nPress Enter to exit: " << endl;
     cin.get();
     cin.get();
-	paymenu();
+    paymenu();
+    return;
 }
 void viewcomplete(){
     loadcomplete(); 
 	system("CLS");
+    cout<<"Completed Request:\n";
     // Table header
     cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
          << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
@@ -1679,9 +1899,139 @@ void viewcomplete(){
             << string(32, '-') << "+" << string(11, '-') << "+" << string(15, '-') << "+" 
             << string(12, '-') << "+" << string(10, '-') << "+\n";
     }
-    cout<<endl;
-    cout<<"Press Enter to go back\n";
+    char a, type = 'c';
+    while(true){
+        cout << "Do you want to search? [y] YES or [N] NO:  ";
+        cin>>a;
+        if(a == 'y'|| a == 'Y'){
+            int opt;
+            do {
+                cout << "Search completed requests by:" << endl;
+                cout << "1. Device Type" << endl;
+                cout << "2. Brand" << endl;
+                cout << "3. Model" << endl;
+                cout << "4. Issue" << endl;
+                cout << "5. Date" << endl;
+                cout << "6. Go Back" << endl;
+                cout << "Enter your choice: ";
+                cin >> opt;
+
+                system("CLS");
+                
+
+                switch (opt) {
+                case 1: searchByDeviceType(complete, comid, type);
+                        break;
+                case 2: searchByBrand(complete, comid, type);
+                        break;
+                case 3: searchByModel(complete, comid, type);
+                        break;
+                case 4: searchByIssue(complete, comid, type);
+                        break;
+                case 5: searchByDate(complete, comid, type);
+                        break;
+                case 6: viewcomplete();
+                        return;
+                default:
+                    cout << "Invalid input. Please try again." << endl;
+                    continue;
+                }
+
+            } while (true);
+            break;
+        }
+        else if(a == 'n' || a == 'N'){
+            break;
+        }
+        else{
+            cout << "Invalid Input\n";
+        }
+    }
+    cout << "\nPress Enter to exit: " << endl;
     cin.get();
     cin.get();
-	paymenu();
+    paymenu();
+    return;
+}
+//search & sort
+void searchByBrand(request arr[], int size, char type) {
+    string search;
+    cout << "Enter the brand to search for: ";
+    getline(cin>>ws, search);
+
+    searchResults.clear();
+    indexes.clear();
+
+    for (int i = 0; i < size; i++) {
+        if (arr[i].brand == search) {
+            indexes.push_back(i); // Store the index 
+            searchResults.push_back(arr[i]); // Add to searchResults
+        }
+    }
+
+    displaySearchResults(arr, size, type);
+}
+void searchByDeviceType(request arr[], int size, char type) {
+    string search;
+    cout << "Enter the device type to search for: ";
+    getline(cin>>ws, search);
+  
+    searchResults.clear();
+    indexes.clear();
+    for (int i = 0; i < size; i++) {
+        if (arr[i].dtype == search) {
+            indexes.push_back(i);
+            searchResults.push_back(arr[i]);
+        }
+    }
+
+    displaySearchResults(arr, size, type);
+}
+void searchByModel(request arr[], int size, char type) {
+    string search;
+    cout << "Enter the Model to search for: ";
+    getline(cin>>ws, search);
+
+    searchResults.clear();
+    indexes.clear();
+    for (int i = 0; i < size; i++) {
+        if (arr[i].model == search) {
+            indexes.push_back(i);
+            searchResults.push_back(arr[i]);
+        }
+    }
+
+    displaySearchResults(arr, size, type);
+}
+void searchByIssue(request arr[], int size, char type) {
+    string search;
+    cout << "Enter the issue to search for: ";
+    getline(cin>>ws, search);
+
+    searchResults.clear();
+    indexes.clear();
+    for (int i = 0; i < size; i++) {
+        if (arr[i].issue == search) {
+            indexes.push_back(i);
+            searchResults.push_back(arr[i]);
+        }
+    }
+
+    displaySearchResults(arr, size, type);
+}
+void searchByDate(request arr[], int size, char type) {
+    string search;
+    cout << "Enter the date (m-d-Y) to search for: ";
+    getline(cin>>ws, search);
+
+    searchResults.clear();
+    indexes.clear();
+    for (int i = 0; i < size; i++) {
+        if (arr[i].date == search) {
+            indexes.push_back(i);
+            searchResults.push_back(arr[i]);
+        }
+    }
+
+    displaySearchResults(arr, size, type);
 }
