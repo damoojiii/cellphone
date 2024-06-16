@@ -97,14 +97,14 @@ void receipt(int index, int change, int paid, char type, string sold){
         cout << "\n";
         cout << setw(70) << "" << "-------------------------------------------------\n";
         cout << "\n";
-        cout << setw(70) << "" << "\t\t\t"<<cellphone[index].date<<" "<<cellphone[index].time<<endl;
-        cout << setw(70) << "" << "\t\t\tThank you, Come Again!\n";
+        cout << setw(70) << "" << "\t\t"<<cellphone[index].date<<" "<<cellphone[index].time<<endl;
+        cout << setw(70) << "" << "\t\tThank you, Come Again!\n";
         cout << "\n";
         cout << setw(70) << "" << "=================================================\n";
         cout << "\n\n";
-        cout << setw(70) << "" << "+-------------------------------------+" << endl;
-        cout << setw(70) << "" << "|       Press Enter to proceed:       |" << endl;
-        cout << setw(70) << "" << "+-------------------------------------+" << endl;
+        cout << setw(75) << "" << "+-------------------------------------+" << endl;
+        cout << setw(75) << "" << "|       Press Enter to proceed:       |" << endl;
+        cout << setw(75) << "" << "+-------------------------------------+" << endl;
         cin.get();
         cin.get();
     }
@@ -129,14 +129,14 @@ void receipt(int index, int change, int paid, char type, string sold){
         cout << "\n";
         cout << setw(70) << "" << "-------------------------------------------------\n";
         cout << "\n";
-        cout << setw(70) << "" << "\t\t\t"<<bns[index].date<<" "<<bns[index].time<<endl;
-        cout << setw(70) << "" << "\t\t\tThank you, Come Again!\n";
+        cout << setw(70) << "" << "\t\t"<<bns[index].date<<" "<<bns[index].time<<endl;
+        cout << setw(70) << "" << "\t\tThank you, Come Again!\n";
         cout << "\n";
         cout << setw(70) << "" << "=================================================\n";
         cout << "\n\n";
-        cout << setw(70) << "" << "+-------------------------------------+" << endl;
-        cout << setw(70) << "" << "|       Press Enter to proceed:       |" << endl;
-        cout << setw(70) << "" << "+-------------------------------------+" << endl;
+        cout << setw(75) << "" << "+-------------------------------------+" << endl;
+        cout << setw(75) << "" << "|       Press Enter to proceed:       |" << endl;
+        cout << setw(75) << "" << "+-------------------------------------+" << endl;
         cin.get();
         cin.get();
     }
@@ -295,6 +295,7 @@ void viewcomplete();
 void delmenu();
 void specdel();
 void alldel();
+
 //search & sort for request
 void searchByCname(request arr[], int size, char type);
 void searchByBrand(request arr[], int size, char type);
@@ -704,11 +705,10 @@ void signIn() {
     cout << setw(55) << "" << "| 2. Forgot Username or Password                     |" << endl;
     cout << setw(55) << "" << "| Enter your choice: ";
     while (!(cin >> choice)) {
-        // Clear the error
+        // clear the error
         cin.clear();
-        // Discard invalid input
+        // discard invalid input
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        // Prompt the user again
         cout << "\n\n";
     cout << setw(55) << "" << "+----------------------------------------------------+" << endl;
     cout << setw(55) << "" << "| Invalid input! Please enter a number:              |" << endl;
@@ -890,11 +890,11 @@ void forgot() {
                     cout << setw(65) << "" << "| What is your mother's     |" << endl;
                     cout << setw(65) << "" << "| maiden name?:             |" << endl;
                     cout << setw(65) << "" << "| > ";
-                    cin >> securityAns1;
+                    getline(cin >> ws, securityAns1);
                     cout << setw(65) << "" << "| What was the name of      |" << endl;
                     cout << setw(65) << "" << "| your first pet?:          |" << endl;
                     cout << setw(65) << "" << "| > ";
-                    cin >> securityAns2;
+                    getline(cin >> ws, securityAns2);
                     cout << setw(65) << "" << "+---------------------------+" << endl;
 
                     if (securityAns1 == signup[0][2] && securityAns2 == signup[0][3]) {
@@ -953,11 +953,11 @@ void forgot() {
                     cout << setw(65) << "" << "| What is your mother's     |" << endl;
                     cout << setw(65) << "" << "| maiden name?:             |" << endl;
                     cout << setw(65) << "" << "| > ";
-                    cin >> securityAns1;
+                    getline(cin >> ws, securityAns1);
                     cout << setw(65) << "" << "| What was the name of      |" << endl;
                     cout << setw(65) << "" << "| your first pet?:          |" << endl;
                     cout << setw(65) << "" << "| > ";
-                    cin >> securityAns2;
+                    getline(cin >> ws, securityAns2);
                     cout << setw(65) << "" << "+---------------------------+" << endl;
 
                     if (securityAns1 == signup[0][2] && securityAns2 == signup[0][3]) {
@@ -2144,7 +2144,7 @@ void updateprod() {
             cout << setw(70) << "" << "| Invalid input. Please try again. |" << endl;
             cout << setw(70) << "" << "+----------------------------------+" << endl;
             this_thread::sleep_for(chrono::seconds(2));
-            return addprod();  // Retry the function
+            return updateprod();  // Retry the function
         }
         cout << setw(70) << "" << "+----------------------------------+" << endl;
 
@@ -2542,9 +2542,9 @@ void displaySold(buysell arr[], int size, int* indexes, int numResults){
          << string(10, '-') << "+" << string(17, '-') << "+" << string(12, '-') << "+" << string(10, '-')<< "+\n";
     }
     cout << "\n\n";
-    cout << setw(85) << "" << "+-----------------------------------+" << endl;
-    cout << setw(85) << "" << "|       Press Enter to proceed:     |" << endl;
-    cout << setw(85) << "" << "+-----------------------------------+" << endl;
+    cout << setw(70) << "" << "+-----------------------------------+" << endl;
+    cout << setw(70) << "" << "|       Press Enter to proceed:     |" << endl;
+    cout << setw(70) << "" << "+-----------------------------------+" << endl;
     cin.get();
 }
 //request payment section
