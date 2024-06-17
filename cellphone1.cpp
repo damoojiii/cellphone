@@ -37,7 +37,7 @@ vector<buysell> prodResults;
 
 //utilities & id/counter
 int id = 0, canid = 0, comid = 0;
-int bid = 0, sid = 0;
+int bid = 0, sid = 0; int key = 13;
 
 bool sign = false, start = true;
 
@@ -252,6 +252,55 @@ void computeRate(int index, char type) {
 //color
 void setLimeColor() {
     cout << "\033[1;92m";
+}
+//encryption & decryption
+string encrypt(string text) {
+    string encrypted = ""; 
+    
+    for (int i = 0; i < text.length(); i++) {
+        char letter = text[i];
+        
+        if (isupper(letter)) {
+            char swap = 'A' + (letter - 'A' + key) % 26;
+            encrypted += swap;
+        } else if (islower(letter)) {
+            char swap = 'a' + (letter - 'a' + key) % 26;
+            encrypted += swap;
+        } else if (isdigit(letter)) {
+        char swap = '0' + (letter - '0' + key) % 10;
+        encrypted += swap;
+        } else {
+            encrypted += letter; 
+        }
+    }
+    
+    return encrypted;
+}
+string decrypt(string text) {
+    string decrypted = ""; 
+    
+    // to decrypt use the negative of the key for backward
+    int inverse = 26 - (key % 26); 
+    int numInverse = 10 - (key % 10);
+    
+    for (int i = 0; i < text.length(); i++) {
+        char letter = text[i];
+        
+        if (isupper(letter)) {
+            char swap = 'A' + (letter - 'A' + inverse) % 26;
+            decrypted += swap;
+        } else if (islower(letter)) {
+            char swap = 'a' + (letter - 'a' + inverse) % 26;
+            decrypted += swap;
+        } else if (isdigit(letter)) {
+            char swap = '0' + (letter - '0' + numInverse) % 10;
+            decrypted += swap;
+        } else {
+            decrypted += letter;  
+        }
+    }
+    
+    return decrypted;
 }
 
 void welcomescreen();
@@ -750,7 +799,9 @@ void login() {
 
         ifstream input("useradmin.txt");
         while (input >> signup[0][0] >> signup[0][1] >> signup[0][2] >> signup[0][3]) {
-            if (signup[0][0] == user && signup[0][1] == pass) {
+            string temp = signup[0][1];
+            temp = decrypt(temp);
+            if (signup[0][0] == user && temp == pass) {
                 found = true;
                 system("cls");
             }
@@ -787,7 +838,7 @@ void login() {
     }
 }
 void regis() {
-    string conpass;
+    string pass, conpass, ans1, ans2;
     system("CLS");
 
     cout << endl << endl << endl;
@@ -808,26 +859,30 @@ void regis() {
 
     while (true) {
         cout << setw(60) << "" << "Enter the Password: ";
-        signup[0][1] = getPassword();
+        pass = getPassword();
         cout << endl;
         cout << setw(60) << "" << "Confirm Password: ";
         conpass = getPassword();
         cout << endl;
-        if (signup[0][1] != conpass) {
+        if (pass != conpass) {
             cout << setw(60) << "" << "Password and Confirm Password Don't Match" << endl << endl;
         }
         else {
+            signup[0][1] = encrypt(pass);
+
             break;
         }
     }
 
     cout << setw(60) << "" << "Security Question 1: What is your mother's maiden name?\n";
     cout << setw(60) << "" << "Answer: ";
-    getline(cin >> ws, signup[0][2]);
+    getline(cin >> ws, ans1);
+    signup[0][2] = encrypt(ans1);
     cout << endl;
     cout << setw(60) << "" << "Security Question 2: What was the name of your first pet?\n";
     cout << setw(60) << "" << "Answer: ";
-    getline(cin >> ws, signup[0][3]);
+    getline(cin >> ws, ans2);
+    signup[0][3] = encrypt(ans2);
 
     ofstream reg("useradmin.txt", ios::app);
     reg << signup[0][0] << " " << signup[0][1] << " " << signup[0][2] << " " << signup[0][3] << endl;
@@ -881,6 +936,9 @@ void forgot() {
 
             while (check >> signup[0][0] >> signup[0][1] >> signup[0][2] >> signup[0][3]) {
                 if (signup[0][0] == susername) {
+                    string tempans1 = signup[0][2], tempans2 = signup[0][3];
+                    tempans1 = decrypt(tempans1);
+                    tempans2 = decrypt(tempans2);
                     found = true;
                     cout << "\n\n\n";
                     cout << setw(65) << "" << "+---------------------------+" << endl;
@@ -897,12 +955,15 @@ void forgot() {
                     getline(cin >> ws, securityAns2);
                     cout << setw(65) << "" << "+---------------------------+" << endl;
 
-                    if (securityAns1 == signup[0][2] && securityAns2 == signup[0][3]) {
+                    if (securityAns1 == tempans1 && securityAns2 == tempans2) {
+                        string temp = signup[0][1];
+                        temp = decrypt(temp);
                         cout << "\n\n";
                         cout << setw(65) << "" << "+---------------------------------+" << endl;
                         cout << setw(65) << "" << "| Account recovered!              |" << endl;
-                        cout << setw(65) << "" << "| Your password is: " << signup[0][1] << setw(8) << " |" << endl;
+                        cout << setw(65) << "" << "| Your password is: " << temp << setw(8) << " |" << endl;
                         cout << setw(65) << "" << "+---------------------------------+" << endl;
+                        this_thread::sleep_for(chrono::seconds(3));
                         updateadmin();
                     } else {
                         cout << "\n\n";
@@ -943,7 +1004,12 @@ void forgot() {
             bool found = false;
 
             while (check >> signup[0][0] >> signup[0][1] >> signup[0][2] >> signup[0][3]) {
-                if (signup[0][1] == spassword) {
+                string temp = signup[0][1];
+                temp = decrypt(temp);
+                if (temp == spassword) {
+                    string tempans1 = signup[0][2], tempans2 = signup[0][3];
+                    tempans1 = decrypt(tempans1);
+                    tempans2 = decrypt(tempans2);
                     found = true;
                     cout << "\n\n\n";
                     cout << setw(65) << "" << "+---------------------------+" << endl;
@@ -960,12 +1026,13 @@ void forgot() {
                     getline(cin >> ws, securityAns2);
                     cout << setw(65) << "" << "+---------------------------+" << endl;
 
-                    if (securityAns1 == signup[0][2] && securityAns2 == signup[0][3]) {
+                    if (securityAns1 == tempans1 && securityAns2 == tempans2) {
                         cout << "\n\n\n";
                         cout << setw(65) << "" << "+--------------------------------+" << endl;
                         cout << setw(65) << "" << "| Account recovered!             |" << endl;
                         cout << setw(65) << "" << "| Your Username is: " << signup[0][0] << setw(7) << " |" << endl;
                         cout << setw(65) << "" << "+--------------------------------+" << endl;
+                        this_thread::sleep_for(chrono::seconds(3));
                         updateadmin();
                     } else {
                         cout << "\n\n";
@@ -1076,19 +1143,19 @@ void updateadmin() {
                         return;
                     }
                     case 2: {
-                        string conpass, line, updateline;
+                        string pass, conpass, line, updateline;
                         while (true) {
                             cout << "\n\n\n";
                             cout << setw(65) << "" << "+--------------------------------+" << endl;
                             cout << setw(65) << "" << "| Enter Updated Password:        |" << endl;
                             cout << setw(65) << "" << "| > ";
-                            signup[0][1] = getPassword();
+                            pass = getPassword();
                             cout << setw(65) << "" << "| Confirm Updated Password:      |" << endl;
                             cout << setw(65) << "" << "| > ";
                             conpass = getPassword();
                             cout << setw(65) << "" << "+--------------------------------+" << endl;
 
-                            if (signup[0][1] != conpass) {
+                            if (pass != conpass) {
                                 cout << "\n\n";
                                 cout << setw(65) << "" << "+--------------------------------+" << endl;
                                 cout << setw(65) << "" << "| Passwords do not match.        |" << endl;
@@ -1097,6 +1164,7 @@ void updateadmin() {
                                 cout << endl << endl;
                                 this_thread::sleep_for(chrono::seconds(2));
                             } else {
+                                signup[0][1] = encrypt(pass);
                                 break;
                             }
                         }
@@ -1117,7 +1185,7 @@ void updateadmin() {
                         return;
                     }
                     case 3: {
-                        string conpass, line, updateline;
+                        string pass, conpass, line, updateline;
                         cout << "\n\n\n";
                         cout << setw(65) << "" << "+--------------------------------+" << endl;
                         cout << setw(65) << "" << "| Enter Updated Username:        |" << endl;
@@ -1126,13 +1194,13 @@ void updateadmin() {
                         while (true) {
                             cout << setw(65) << "" << "| Enter Updated Password:        |" << endl;
                             cout << setw(65) << "" << "| > ";
-                            signup[0][1] = getPassword();
+                            pass = getPassword();
                             cout << setw(65) << "" << "| Confirm Updated Password:      |" << endl;
                             cout << setw(65) << "" << "| > ";
                             conpass = getPassword();
                             cout << setw(65) << "" << "+--------------------------------+" << endl;
 
-                            if (signup[0][1] != conpass) {
+                            if (pass != conpass) {
                                 cout << "\n\n";
                                 cout << setw(65) << "" << "+--------------------------------+" << endl;
                                 cout << setw(65) << "" << "| Passwords do not match.        |" << endl;
@@ -1141,6 +1209,7 @@ void updateadmin() {
                                 cout << endl << endl;
                                 this_thread::sleep_for(chrono::seconds(2));
                             } else {
+                                signup[0][1]=encrypt(pass);
                                 break;
                             }
                         }
@@ -1188,7 +1257,7 @@ void updateadmin() {
 }
 void settings() {
     int count = 0, max = 5;
-    std::string pass;
+    string pass, temp;
 
     while (count <= max) {
         system("CLS");
@@ -1197,8 +1266,9 @@ void settings() {
         cout << setw(65) << "" << "|   Enter your password to proceed   |" << endl;
         cout << setw(65) << "" << "| > ";
         pass = getPassword();
-
-        if (pass != signup[0][1]) {
+        temp = signup[0][1];
+        temp = decrypt(temp);
+        if (pass != temp) {
             cout << "\n\n";
             cout << setw(65) << "" << "+----------------------------------+" << endl;
             cout << setw(65) << "" << "|        Password Incorrect        |" << endl;
