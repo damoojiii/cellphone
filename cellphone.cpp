@@ -24,12 +24,12 @@ struct buysell{
 //arrays & vectors
 string signup[1][4];//admin
 
-request cellphone[100];
-request cancel[100];
-request complete[100];
+request cellphone[50];
+request cancel[255];
+request complete[255];
 
 buysell bns[100];
-buysell sold[100];
+buysell sold[255];
 
 vector<int> indexes;
 vector<request> searchResults;
@@ -289,6 +289,7 @@ void paymenu();
 void collect();
 void viewcancel();
 void viewcomplete();
+
 //working
 
 //considerations
@@ -389,7 +390,7 @@ int main() {
         start = false;
         welcomescreen();
     }
-
+    //check if the database for admin is empty, if empty it will proceed to register, otherwise it will proceed to login
     ifstream empty("useradmin.txt");
     if (empty.peek() == ifstream::traits_type::eof()) {
         empty.close();
@@ -432,8 +433,8 @@ int main() {
         cout << setw(65) << "" << "| > ";
         int choice;
         while (!(cin >> choice)) {
-            cin.clear();    // Clear the error flag
-            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discard invalid input
+            cin.clear();    // clear the error
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // discard invalid input
             cout << "\n\n";
             cout << setw(65) << "" << "+----------------------------------+" << endl;
             cout << setw(65) << "" << "| Invalid input! Please enter a    |" << endl;
@@ -537,7 +538,7 @@ void loadpending()
 }
 void save(char type){
 	
-    if(type == 'p'){
+    if(type == 'p'){ // for pending request
         ofstream write ("customerticket.txt");
         if(!write){
             cerr<<"Error opening file for writing"<<endl;
@@ -552,7 +553,7 @@ void save(char type){
         }
         write.close();
     }
-    else if(type == 'b'){
+    else if(type == 'b'){ // for product
         ofstream write ("buyprod.txt");
         if(!write){
             cerr<<"Error opening file for writing"<<endl;
@@ -712,14 +713,14 @@ void signIn() {
     cout << setw(55) << "" << "| 2. Forgot Username or Password                     |" << endl;
     cout << setw(55) << "" << "| Enter your choice: ";
     while (!(cin >> choice)) {
-        // clear the error
-        cin.clear();
-        // discard invalid input
-        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        
+        cin.clear(); // clear the error
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // discard invalid input
         cout << "\n\n";
-    cout << setw(55) << "" << "+----------------------------------------------------+" << endl;
-    cout << setw(55) << "" << "| Invalid input! Please enter a number:              |" << endl;
-    cout << setw(55) << "" << "| > ";
+        cout << setw(70) << "" << "+------------------------------+" << endl;
+        cout << setw(70) << "" << "| Invalid input!               |" << endl;
+        cout << setw(70) << "" << "| Please enter a number:       |" << endl;
+        cout << setw(70) << "" << "| > ";
     }
     cout << setw(55) << "" << "+----------------------------------------------------+" << endl;
 
@@ -777,7 +778,7 @@ void login() {
             cout << "\n\n\n\n\n\n\n\n\n";
             cout << setw(65) << "" << "+---------------------------+" << endl;
             cout << setw(65) << "" << "|   Too many attempts!      |" << endl;
-            cout << setw(65) << "" << "|    Exiting the program... |" << endl;
+            cout << setw(65) << "" << "|   Exiting the program...  |" << endl;
             cout << setw(65) << "" << "+---------------------------+" << endl;
             this_thread::sleep_for(chrono::seconds(2));
             exit(0);
@@ -1257,12 +1258,8 @@ void settings() {
         cout << setw(65) << "" << "+----------------------------------+" << endl;
 
         switch (choice) {
-            case 1:
-                updateadmin();
-                return;
-            case 2:
-                main();
-                return;
+            case 1: updateadmin(); return;
+            case 2: main(); return;
             default:
                 cout << "\n\n";
                 cout << setw(65) << "" << "+----------------------------------+" << endl;
@@ -3014,6 +3011,8 @@ void searchByCname(request arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the customer name to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin >> ws, search);
+    cout << setw(70) << "" << "+----------------------------------------+" << endl;
+    cout << "\n";
 
     searchResults.clear();
     indexes.clear();
@@ -3034,6 +3033,8 @@ void searchByBrand(request arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the Brand to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+--------------------------------+" << endl;
+    cout << "\n";
 
     searchResults.clear();
     indexes.clear();
@@ -3054,6 +3055,8 @@ void searchByDeviceType(request arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the Device type to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+--------------------------------------+" << endl;
+    cout << "\n";
   
     searchResults.clear();
     indexes.clear();
@@ -3092,6 +3095,8 @@ void searchByIssue(request arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the Issue to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+--------------------------------+" << endl;
+    cout << "\n";
 
     searchResults.clear();
     indexes.clear();
@@ -3111,6 +3116,8 @@ void searchByDate(request arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the Date (m-d-Y) to search for:  |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+----------------------------------------+" << endl;
+    cout << "\n";
 
     searchResults.clear();
     indexes.clear();
@@ -3131,6 +3138,8 @@ void searchByPBrand(buysell arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the Brand to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+--------------------------------+" << endl;
+    cout << "\n";
 
     prodResults.clear();
     indexes.clear();
@@ -3151,6 +3160,8 @@ void searchByPDeviceType(buysell arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the Device type to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+--------------------------------------+" << endl;
+    cout << "\n";
   
     prodResults.clear();
     indexes.clear();
@@ -3170,6 +3181,8 @@ void searchByPModel(buysell arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the Model to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+--------------------------------+" << endl;
+    cout << "\n";
 
     prodResults.clear();
     indexes.clear();
@@ -3189,6 +3202,8 @@ void searchByPColor(buysell arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the Color to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+--------------------------------+" << endl;
+    cout << "\n";
 
     prodResults.clear();
     indexes.clear();
@@ -3208,6 +3223,8 @@ void searchByPDisplay(buysell arr[], int size, char type) {
     cout << setw(60) << "" << "| Enter the Display/Resolution to search for: |"<< endl;
     cout << setw(60) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(60) << "" << "+---------------------------------------------+" << endl;
+    cout << "\n";
 
     prodResults.clear();
     indexes.clear();
@@ -3227,6 +3244,8 @@ void searchByPCamera(buysell arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the Camera pixel to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+---------------------------------------+" << endl;
+    cout << "\n";
 
     prodResults.clear();
     indexes.clear();
@@ -3246,6 +3265,8 @@ void searchByPStorage(buysell arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the Storage size to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+---------------------------------------+" << endl;
+    cout << "\n";
 
     prodResults.clear();
     indexes.clear();
@@ -3265,6 +3286,8 @@ void searchByPCpu(buysell arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the Processor to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+------------------------------------+" << endl;
+    cout << "\n";
 
     prodResults.clear();
     indexes.clear();
@@ -3284,6 +3307,8 @@ void searchByPRam(buysell arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the RAM size to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+-----------------------------------+" << endl;
+    cout << "\n";
 
     prodResults.clear();
     indexes.clear();
@@ -3302,7 +3327,17 @@ void searchByLowPrice(buysell arr[], int size, char type) {
     cout << setw(70) << "" << "+--------------------------------+" << endl;
     cout << setw(70) << "" << "| Enter the Price to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
-    cin>>search;
+    while (!(cin >> search)) {
+        cin.clear();
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        cout << "\n\n";
+        cout << setw(70) << "" << "+----------------------------------+" << endl;
+        cout << setw(70) << "" << "| Invalid input! Please enter a    |" << endl;
+        cout << setw(70) << "" << "| number:                          |" << endl;
+        cout << setw(70) << "" << "| > ";
+    }
+    cout << setw(70) << "" << "+--------------------------------+" << endl;
+    cout << "\n";
 
     prodResults.clear();
     indexes.clear();
@@ -3321,7 +3356,17 @@ void searchByHighPrice(buysell arr[], int size, char type) {
     cout << setw(70) << "" << "+--------------------------------+" << endl;
     cout << setw(70) << "" << "| Enter the Price to search for: |"<< endl;
     cout << setw(70) << "" << "| > ";
-    cin>>search;
+    while (!(cin >> search)) {
+        cin.clear();
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        cout << "\n\n";
+        cout << setw(70) << "" << "+----------------------------------+" << endl;
+        cout << setw(70) << "" << "| Invalid input! Please enter a    |" << endl;
+        cout << setw(70) << "" << "| number:                          |" << endl;
+        cout << setw(70) << "" << "| > ";
+    }
+    cout << setw(70) << "" << "+--------------------------------+" << endl;
+    cout << "\n";
 
     prodResults.clear();
     indexes.clear();
@@ -3341,6 +3386,8 @@ void searchByPDate(buysell arr[], int size, char type) {
     cout << setw(70) << "" << "| Enter the Date (m-d-Y) to search for:  |"<< endl;
     cout << setw(70) << "" << "| > ";
     getline(cin>>ws, search);
+    cout << setw(70) << "" << "+----------------------------------------+" << endl;
+    cout << "\n";
 
     prodResults.clear();
     indexes.clear();
