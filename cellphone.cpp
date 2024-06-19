@@ -38,6 +38,7 @@ vector<buysell> prodResults;
 //utilities & id/counter
 int id = 0, canid = 0, comid = 0;
 int bid = 0, sid = 0;
+int key = 13;
 
 bool sign = false, start = true;
 
@@ -66,6 +67,55 @@ string getPassword(){
     }
     cout << endl;
     return password;
+}
+// encryption and decryption
+string encrypt(string text) {
+    string encrypted = ""; 
+    
+    for (int i = 0; i < text.length(); i++) {
+        char letter = text[i];
+        
+        if (isupper(letter)) {
+            char swap = 'A' + (letter - 'A' + key) % 26;
+            encrypted += swap;
+        } else if (islower(letter)) {
+            char swap = 'a' + (letter - 'a' + key) % 26;
+            encrypted += swap;
+        } else if (isdigit(letter)) {
+        char swap = '0' + (letter - '0' + key) % 10;
+        encrypted += swap;
+        } else {
+            encrypted += letter; 
+        }
+    }
+    
+    return encrypted;
+}
+string decrypt(string text) {
+    string decrypted = ""; 
+    
+    // to decrypt use the negative of the key for backward
+    int inverse = 26 - (key % 26); 
+    int numInverse = 10 - (key % 10);
+    
+    for (int i = 0; i < text.length(); i++) {
+        char letter = text[i];
+        
+        if (isupper(letter)) {
+            char swap = 'A' + (letter - 'A' + inverse) % 26;
+            decrypted += swap;
+        } else if (islower(letter)) {
+            char swap = 'a' + (letter - 'a' + inverse) % 26;
+            decrypted += swap;
+        } else if (isdigit(letter)) {
+            char swap = '0' + (letter - '0' + numInverse) % 10;
+            decrypted += swap;
+        } else {
+            decrypted += letter;  
+        }
+    }
+    
+    return decrypted;
 }
 // function for table to column width
 string fitColumn(const string& str, size_t width) {
@@ -325,9 +375,9 @@ void displaySold(buysell arr[], int size, int* indexes, int numResults);
 void displaySearchResults(request arr[], int size, char type) {
     if (searchResults.empty()) {
         cout << "\n\n";
-        cout << setw(70) << "" << "+----------------------------------+" << endl;
-        cout << setw(70) << "" << "|        No results found.         |" << endl;
-        cout << setw(70) << "" << "+----------------------------------+" << endl;
+        cout << setw(73) << "" << "+----------------------------------+" << endl;
+        cout << setw(73) << "" << "|        No results found.         |" << endl;
+        cout << setw(73) << "" << "+----------------------------------+" << endl;
         this_thread::sleep_for(chrono::seconds(1));
         if (type == 'a'){
             cview();
@@ -357,9 +407,9 @@ void displaySearchResults(request arr[], int size, char type) {
 void displayProdResults(buysell arr[], int size, char type) {
     if (prodResults.empty()) {
         cout << "\n\n";
-        cout << setw(70) << "" << "+----------------------------------+" << endl;
-        cout << setw(70) << "" << "|        No results found.         |" << endl;
-        cout << setw(70) << "" << "+----------------------------------+" << endl;
+        cout << setw(73) << "" << "+----------------------------------+" << endl;
+        cout << setw(73) << "" << "|        No results found.         |" << endl;
+        cout << setw(73) << "" << "+----------------------------------+" << endl;
         this_thread::sleep_for(chrono::seconds(1));
         if (type == 'a'){
             viewprod();
@@ -383,6 +433,17 @@ void displayProdResults(buysell arr[], int size, char type) {
     }
     
 }
+//request counter for today
+int datetoday(){
+    int datecounter = 0;
+    string dateNow = getCurrentDateTime("%m-%d-%Y");
+    for(int i = 0; i < id; i++){  
+        if(cellphone[i].date == dateNow){
+            datecounter++;
+        }
+    }
+    return datecounter;
+}
 
 int main() {
     setLimeColor();
@@ -405,11 +466,16 @@ int main() {
     loadpending();
     loadcancel();
     loadcomplete();
-
+    int datecounter = datetoday();
+    
     while (true) {
         system("CLS");
-
-        cout << "\n\n\n\n\n\n\n\n\n";
+        cout << "\n\n\n\n\n";
+        cout << setw(65) << "" << "+----------------------------------+" << endl;
+        cout << setw(65) << "" << "|   No. of Ongoing Request Today:  |" << endl;
+        cout << setw(65) << "" << "|                "<< left << setw(18) << datecounter << "|" << endl;
+        cout << setw(65) << "" << "+----------------------------------+" << endl;
+        cout << "\n\n";
         cout << setw(65) << "" << "+----------------------------------+" << endl;
         cout << setw(65) << "" << "|            WELCOME               |" << endl;
         cout << setw(65) << "" << "+----------------------------------+" << endl;
@@ -417,7 +483,7 @@ int main() {
         cout << setw(65) << "" << "|                                  |" << endl;
         cout << setw(65) << "" << "| 1. Create a New Ticket           |" << endl;
         cout << setw(65) << "" << "|                                  |" << endl;
-        cout << setw(65) << "" << "| 2. View All Request Tickets      |" << endl;
+        cout << setw(65) << "" << "| 2. View All Ongoing Request      |" << endl;
         cout << setw(65) << "" << "|                                  |" << endl;
         cout << setw(65) << "" << "| 3. Update Ticket                 |" << endl;
         cout << setw(65) << "" << "|                                  |" << endl;
@@ -467,15 +533,8 @@ int main() {
         cout << endl;
     }
 }
-
-void welcomescreen() {
-    system("CLS");
-
-    int screenWidth = 150;
+void printLogo(int screenWidth) {
     int logoWidth = 20;
-    int titleWidth = 30;
-    int welcomeWidth = 35;
-    cout << "\n\n\n";
     cout << setw((screenWidth - logoWidth) / 2) << "" << "              ____             " << endl;
     cout << setw((screenWidth - logoWidth) / 2) << "" << "             //\\  \\           " << endl;
     cout << setw((screenWidth - logoWidth) / 2) << "" << "            //  \\  \\         " << endl;
@@ -499,14 +558,58 @@ void welcomescreen() {
     cout << setw((screenWidth - logoWidth) / 2) << "" << "     \\    //" << endl;
     cout << setw((screenWidth - logoWidth) / 2) << "" << "      -----" << endl;
     cout << endl;
+}
+void printLogo1(int screenWidth) {
+    int logoWidth = 20;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "              ____             " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "             //\\  \\           " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "            //  \\  \\         " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "           //\\   \\  \\       " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "          //||\\   \\  \\     " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "         //||||\\   \\  \\   " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "        //||||||\\   \\  \\ " << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "       //||||||||\\   \\ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "      //||||||||||\\ / //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "     //||||||||||||/ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "    //||||||||||||/ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "   //||||||||||||/ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "  //||||||||||||/ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << " /\\||||||||||||/ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "/  \\||||||||||/ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "\\   \\||||||||/ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << " \\   \\||||||/ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "  \\   \\||||/ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "   \\   \\||/ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "    \\   \\/ //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "     \\    //" << endl;
+    cout << setw((screenWidth - logoWidth) / 2) << "" << "      -----" << endl;
+    cout << endl;
+}
+void welcomescreen() {
+    int screenWidth = 160;
+    int titleWidth = 29;
+    int welcomeWidth = 37;
 
+    auto start_time = chrono::steady_clock::now();
+    while (chrono::steady_clock::now() - start_time < chrono::seconds(3)) {
+        system("CLS");
+        cout<<"\n\n";
+        printLogo(screenWidth);
+        this_thread::sleep_for(chrono::milliseconds(800)); 
+        system("CLS");
+        cout<<"\n\n";
+        printLogo1(screenWidth);
+        this_thread::sleep_for(chrono::milliseconds(800)); 
+    }
+
+    system("CLS");
+    cout<<"\n\n";
+    printLogo(screenWidth);
     cout << setw((screenWidth - titleWidth) / 2) << "" << "CELLPHONE REPAIR REQUEST SYSTEM" << endl;
     cout << endl;
-
     cout << setw((screenWidth - welcomeWidth) / 2) << "" << "Welcome to Our Cellphone Repair Service" << endl;
     cout << endl;
-
-    this_thread::sleep_for(chrono::seconds(5));
+    this_thread::sleep_for(chrono::seconds(3));
 }
 // save & load file for customer request
 void loadpending()
@@ -717,10 +820,10 @@ void signIn() {
         cin.clear(); // clear the error
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // discard invalid input
         cout << "\n\n";
-        cout << setw(70) << "" << "+------------------------------+" << endl;
-        cout << setw(70) << "" << "| Invalid input!               |" << endl;
-        cout << setw(70) << "" << "| Please enter a number:       |" << endl;
-        cout << setw(70) << "" << "| > ";
+        cout << setw(67) << "" << "+------------------------------+" << endl;
+        cout << setw(67) << "" << "| Invalid input!               |" << endl;
+        cout << setw(67) << "" << "| Please enter a number:       |" << endl;
+        cout << setw(67) << "" << "| > ";
     }
     cout << setw(55) << "" << "+----------------------------------------------------+" << endl;
 
@@ -738,7 +841,7 @@ void signIn() {
     }
 }
 void login() {
-    int count = 0;
+    int count = 1;
     bool found = false;
     string user, pass;
 
@@ -758,7 +861,9 @@ void login() {
 
         ifstream input("useradmin.txt");
         while (input >> signup[0][0] >> signup[0][1] >> signup[0][2] >> signup[0][3]) {
-            if (signup[0][0] == user && signup[0][1] == pass) {
+            string temp = signup[0][1];
+            temp = decrypt(temp);
+            if (signup[0][0] == user && temp == pass) {
                 found = true;
                 system("cls");
             }
@@ -774,8 +879,8 @@ void login() {
             cout << setw(65) << "" << "+---------------------------+" << endl;
             this_thread::sleep_for(chrono::seconds(3));
             main();
-        } else if (count == 5) {
-            cout << "\n\n\n\n\n\n\n\n\n";
+        } else if (count == 3) {
+            cout << "\n\n\n";
             cout << setw(65) << "" << "+---------------------------+" << endl;
             cout << setw(65) << "" << "|   Too many attempts!      |" << endl;
             cout << setw(65) << "" << "|   Exiting the program...  |" << endl;
@@ -783,7 +888,7 @@ void login() {
             this_thread::sleep_for(chrono::seconds(2));
             exit(0);
         } else {
-            cout << "\n\n\n\n\n\n\n\n\n";
+            cout << "\n\n\n";
             cout << setw(65) << "" << "+---------------------------+" << endl;
             cout << setw(65) << "" << "| Invalid Username or       |" << endl;
             cout << setw(65) << "" << "| Password. Please try      |" << endl;
@@ -795,7 +900,7 @@ void login() {
     }
 }
 void regis() {
-    string conpass;
+    string pass, conpass, ans1, ans2;
     system("CLS");
 
     cout << endl << endl << endl;
@@ -816,26 +921,29 @@ void regis() {
 
     while (true) {
         cout << setw(60) << "" << "Enter the Password: ";
-        signup[0][1] = getPassword();
+        pass = getPassword();
         cout << endl;
         cout << setw(60) << "" << "Confirm Password: ";
         conpass = getPassword();
         cout << endl;
-        if (signup[0][1] != conpass) {
+        if (pass != conpass) {
             cout << setw(60) << "" << "Password and Confirm Password Don't Match" << endl << endl;
         }
         else {
+            signup[0][1] = encrypt(pass);
             break;
         }
     }
 
     cout << setw(60) << "" << "Security Question 1: What is your mother's maiden name?\n";
     cout << setw(60) << "" << "Answer: ";
-    getline(cin >> ws, signup[0][2]);
+    getline(cin >> ws, ans1);
+    signup[0][2] = encrypt(ans1);
     cout << endl;
     cout << setw(60) << "" << "Security Question 2: What was the name of your first pet?\n";
     cout << setw(60) << "" << "Answer: ";
-    getline(cin >> ws, signup[0][3]);
+    getline(cin >> ws, ans2);
+    signup[0][3] = encrypt(ans2);
 
     ofstream reg("useradmin.txt", ios::app);
     reg << signup[0][0] << " " << signup[0][1] << " " << signup[0][2] << " " << signup[0][3] << endl;
@@ -891,6 +999,9 @@ void forgot() {
 
             while (check >> signup[0][0] >> signup[0][1] >> signup[0][2] >> signup[0][3]) {
                 if (signup[0][0] == susername) {
+                    string tempans1 = signup[0][2], tempans2 = signup[0][3];
+                    tempans1 = decrypt(tempans1);
+                    tempans2 = decrypt(tempans2);
                     found = true;
                     cout << "\n\n\n";
                     cout << setw(65) << "" << "+---------------------------+" << endl;
@@ -907,12 +1018,15 @@ void forgot() {
                     getline(cin >> ws, securityAns2);
                     cout << setw(65) << "" << "+---------------------------+" << endl;
 
-                    if (securityAns1 == signup[0][2] && securityAns2 == signup[0][3]) {
+                    if (securityAns1 == tempans1 && securityAns2 == tempans2) {
+                        string temp = signup[0][1];
+                        temp = decrypt(temp);
                         cout << "\n\n";
                         cout << setw(65) << "" << "+---------------------------------+" << endl;
                         cout << setw(65) << "" << "| Account recovered!              |" << endl;
-                        cout << setw(65) << "" << "| Your password is: " << signup[0][1] << setw(8) << " |" << endl;
+                        cout << setw(65) << "" << "| Your password is: " << temp << setw(8) << " |" << endl;
                         cout << setw(65) << "" << "+---------------------------------+" << endl;
+                        this_thread::sleep_for(chrono::seconds(3));
                         updateadmin();
                     } else {
                         cout << "\n\n";
@@ -953,7 +1067,12 @@ void forgot() {
             bool found = false;
 
             while (check >> signup[0][0] >> signup[0][1] >> signup[0][2] >> signup[0][3]) {
-                if (signup[0][1] == spassword) {
+                string temp = signup[0][1];
+                temp = decrypt(temp);
+                if (temp == spassword) {
+                    string tempans1 = signup[0][2], tempans2 = signup[0][3];
+                    tempans1 = decrypt(tempans1);
+                    tempans2 = decrypt(tempans2);
                     found = true;
                     cout << "\n\n\n";
                     cout << setw(65) << "" << "+---------------------------+" << endl;
@@ -970,12 +1089,13 @@ void forgot() {
                     getline(cin >> ws, securityAns2);
                     cout << setw(65) << "" << "+---------------------------+" << endl;
 
-                    if (securityAns1 == signup[0][2] && securityAns2 == signup[0][3]) {
+                    if (securityAns1 == tempans1 && securityAns2 == tempans2) {
                         cout << "\n\n\n";
                         cout << setw(65) << "" << "+--------------------------------+" << endl;
                         cout << setw(65) << "" << "| Account recovered!             |" << endl;
                         cout << setw(65) << "" << "| Your Username is: " << signup[0][0] << setw(7) << " |" << endl;
                         cout << setw(65) << "" << "+--------------------------------+" << endl;
+                        this_thread::sleep_for(chrono::seconds(3));
                         updateadmin();
                     } else {
                         cout << "\n\n";
@@ -1039,8 +1159,11 @@ void updateadmin() {
                 cout << setw(65) << "" << "|        Update Account Menu     |" << endl;
                 cout << setw(65) << "" << "+--------------------------------+" << endl;
                 cout << setw(65) << "" << "| 1. Update Username             |" << endl;
+                cout << setw(65) << "" << "|                                |" << endl;
                 cout << setw(65) << "" << "| 2. Update Password             |" << endl;
+                cout << setw(65) << "" << "|                                |" << endl;
                 cout << setw(65) << "" << "| 3. Update All                  |" << endl;
+                cout << setw(65) << "" << "|                                |" << endl;
                 cout << setw(65) << "" << "| 4. Go back                     |" << endl;
                 cout << setw(65) << "" << "+--------------------------------+" << endl;
                 cout << setw(65) << "" << "| Enter your choice:             |" << endl;
@@ -1086,19 +1209,19 @@ void updateadmin() {
                         return;
                     }
                     case 2: {
-                        string conpass, line, updateline;
+                        string pass, conpass, line, updateline;
                         while (true) {
                             cout << "\n\n\n";
                             cout << setw(65) << "" << "+--------------------------------+" << endl;
                             cout << setw(65) << "" << "| Enter Updated Password:        |" << endl;
                             cout << setw(65) << "" << "| > ";
-                            signup[0][1] = getPassword();
+                            pass = getPassword();
                             cout << setw(65) << "" << "| Confirm Updated Password:      |" << endl;
                             cout << setw(65) << "" << "| > ";
                             conpass = getPassword();
                             cout << setw(65) << "" << "+--------------------------------+" << endl;
 
-                            if (signup[0][1] != conpass) {
+                            if (pass != conpass) {
                                 cout << "\n\n";
                                 cout << setw(65) << "" << "+--------------------------------+" << endl;
                                 cout << setw(65) << "" << "| Passwords do not match.        |" << endl;
@@ -1107,6 +1230,7 @@ void updateadmin() {
                                 cout << endl << endl;
                                 this_thread::sleep_for(chrono::seconds(2));
                             } else {
+                                signup[0][1] = encrypt(pass);
                                 break;
                             }
                         }
@@ -1127,7 +1251,7 @@ void updateadmin() {
                         return;
                     }
                     case 3: {
-                        string conpass, line, updateline;
+                        string pass, conpass, line, updateline;
                         cout << "\n\n\n";
                         cout << setw(65) << "" << "+--------------------------------+" << endl;
                         cout << setw(65) << "" << "| Enter Updated Username:        |" << endl;
@@ -1136,13 +1260,13 @@ void updateadmin() {
                         while (true) {
                             cout << setw(65) << "" << "| Enter Updated Password:        |" << endl;
                             cout << setw(65) << "" << "| > ";
-                            signup[0][1] = getPassword();
+                            pass = getPassword();
                             cout << setw(65) << "" << "| Confirm Updated Password:      |" << endl;
                             cout << setw(65) << "" << "| > ";
                             conpass = getPassword();
                             cout << setw(65) << "" << "+--------------------------------+" << endl;
 
-                            if (signup[0][1] != conpass) {
+                            if (pass != conpass) {
                                 cout << "\n\n";
                                 cout << setw(65) << "" << "+--------------------------------+" << endl;
                                 cout << setw(65) << "" << "| Passwords do not match.        |" << endl;
@@ -1151,6 +1275,7 @@ void updateadmin() {
                                 cout << endl << endl;
                                 this_thread::sleep_for(chrono::seconds(2));
                             } else {
+                                signup[0][1]=encrypt(pass);
                                 break;
                             }
                         }
@@ -1197,8 +1322,8 @@ void updateadmin() {
     }
 }
 void settings() {
-    int count = 0, max = 5;
-    std::string pass;
+    int count = 1, max = 3;
+    string pass, temp;
 
     while (count <= max) {
         system("CLS");
@@ -1207,8 +1332,10 @@ void settings() {
         cout << setw(65) << "" << "|   Enter your password to proceed   |" << endl;
         cout << setw(65) << "" << "| > ";
         pass = getPassword();
+        temp = signup[0][1];
+        temp = decrypt(temp);
 
-        if (pass != signup[0][1]) {
+        if (pass != temp) {
             cout << "\n\n";
             cout << setw(65) << "" << "+----------------------------------+" << endl;
             cout << setw(65) << "" << "|        Password Incorrect        |" << endl;
@@ -1278,7 +1405,7 @@ void cticket() {
     cout << setw(65) << "" << "+----------------------------------+" << endl;
     cout << setw(65) << "" << "|       Create New Ticket          |" << endl;
     cout << setw(65) << "" << "+----------------------------------+" << endl;
-    cout << setw(65) << "" << "| Please Provide the Following     |" << endl;
+    cout << setw(65) << "" << "| Please Provide the following     |" << endl;
     cout << setw(65) << "" << "| details:                         |" << endl;
     cout << setw(65) << "" << "+----------------------------------+" << endl;
     cout << setw(65) << "" << "| Customer Name:                   |" << endl;
@@ -1300,7 +1427,7 @@ void cticket() {
     cout << setw(65) << "" << "| > ";
     getline(cin >> ws, cellphone[id].issue);
 
-    cellphone[id].status = "Pending..";
+    cellphone[id].status = "Ongoing";
     cellphone[id].date = getCurrentDateTime("%m-%d-%Y");
     cellphone[id].time = getCurrentDateTime("%I:%M %p");
 
@@ -1354,6 +1481,7 @@ void displaycustomer(){
 }
 void displayselect(int index, char dis) {
     system("CLS");
+    cout << "\n\n\n\n";
     if(dis == 'p'){
         cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
          << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
@@ -1491,7 +1619,7 @@ void cview() {
             int opt;
             while (true) {
                 system("CLS");
-                cout << "\n\n";
+                cout << "\n\n\n\n\n";
                 cout << setw(70) << "" << "+----------------------------------+" << endl;
                 cout << setw(70) << "" << "|       SEARCH REQUESTS BY:        |" << endl;
                 cout << setw(70) << "" << "+----------------------------------+" << endl;
@@ -1545,7 +1673,7 @@ void cview() {
         } else {
             cout << "\n\n";
             cout << setw(70) << "" << "+----------------------------------+" << endl;
-            cout << setw(70) << "" << "| Invalid Input                    |" << endl;
+            cout << setw(70) << "" << "|          Invalid Input           |" << endl;
             cout << setw(70) << "" << "+----------------------------------+" << endl;
             this_thread::sleep_for(chrono::seconds(2));
         }
@@ -1596,6 +1724,7 @@ void cupdate() {
 
     if (index != -1) {
         char type = 'p';
+        cout << "\n\n";
         cout << setw(70) << "" << "+----------------------------------+" << endl;
         cout << setw(70) << "" << "| Enter Updated Customer Name:     |" << endl;
         cout << setw(70) << "" << "| > ";
@@ -1845,7 +1974,7 @@ void viewprod() {
             int opt;
             while (true) {
                 system("CLS");
-                cout << "\n\n";
+                cout << "\n\n\n\n";
                 cout << setw(70) << "" << "+----------------------------------+" << endl;
                 cout << setw(70) << "" << "|        SEARCH PRODUCTS BY:       |" << endl;
                 cout << setw(70) << "" << "+----------------------------------+" << endl;
@@ -2057,7 +2186,7 @@ void updateprod() {
     cout << setw(70) << "" << "+----------------------------+" << endl;
 
     if(num == 0){
-        main(); return;
+        buynsell(); return;
     }
     
 
@@ -2079,48 +2208,39 @@ void updateprod() {
         cout << setw(70) << "" << "| Enter Updated Brand:             |" << endl;
         cout << setw(70) << "" << "| > ";
         getline(cin >> ws, bns[index].brand);
-        cout << setw(70) << "" << "+----------------------------------+" << endl;
-        
+        cout << setw(70) << "" << "+----------------------------------+" << endl; 
         cout << setw(70) << "" << "| Enter Updated Device Type:       |" << endl;
         cout << setw(70) << "" << "| > ";
         getline(cin >> ws, bns[index].dtype);
         cout << setw(70) << "" << "+----------------------------------+" << endl;
-
         cout << setw(70) << "" << "| Enter Updated Model:             |" << endl;
         cout << setw(70) << "" << "| > ";
         getline(cin >> ws, bns[index].model);
         cout << setw(70) << "" << "+----------------------------------+" << endl;
-
         cout << setw(70) << "" << "| Enter Updated Color:             |" << endl;
         cout << setw(70) << "" << "| > ";
         getline(cin >> ws, bns[index].color);
         cout << setw(70) << "" << "+----------------------------------+" << endl;
-
-        cout << setw(70) << "" << "| Enter Updated Display/Resolution:| |" << endl;
+        cout << setw(70) << "" << "| Enter Updated Display/Resolution:|" << endl;
         cout << setw(70) << "" << "| > ";
         getline(cin >> ws, bns[index].display);
         cout << setw(70) << "" << "+----------------------------------+" << endl;
-
         cout << setw(70) << "" << "| Enter Updated Camera:            |" << endl;
         cout << setw(70) << "" << "| > ";
         getline(cin >> ws, bns[index].cam);
         cout << setw(70) << "" << "+----------------------------------+" << endl;
-
         cout << setw(70) << "" << "| Enter Updated Storage:           |" << endl;
         cout << setw(70) << "" << "| > ";
         getline(cin >> ws, bns[index].storage);
         cout << setw(70) << "" << "+----------------------------------+" << endl;
-
         cout << setw(70) << "" << "| Enter Updated Processor:         |" << endl;
         cout << setw(70) << "" << "| > ";
         getline(cin >> ws, bns[index].cpu);
         cout << setw(70) << "" << "+----------------------------------+" << endl;
-
         cout << setw(70) << "" << "| Enter Updated RAM:               |" << endl;
         cout << setw(70) << "" << "| > ";
         getline(cin >> ws, bns[index].ram);
         cout << setw(70) << "" << "+----------------------------------+" << endl;
-
         cout << setw(70) << "" << "| Enter Updated Price:             |" << endl;
         cout << setw(70) << "" << "| > ";
         cin >> bns[index].price;
@@ -2148,6 +2268,8 @@ void updateprod() {
         cout << setw(70) << "" << "|       Product not found!         |" << endl;
         cout << setw(70) << "" << "+----------------------------------+" << endl;
         this_thread::sleep_for(chrono::seconds(2));
+        updateprod();
+        return;
     }
     
     buynsell();
@@ -2177,7 +2299,7 @@ void delprod() {
     }
     cout << setw(70) << "" << "+---------------------------------+" << endl;
     if(num == 0){
-        main(); return;
+        buynsell(); return;
     }
     int index = -1;
     for (int i = 0; i < bid; i++) {
@@ -2236,6 +2358,8 @@ void delprod() {
         cout << setw(70) << "" << "|        Product not found!        |" << endl;
         cout << setw(70) << "" << "+----------------------------------+" << endl;
         this_thread::sleep_for(chrono::seconds(2));
+        delprod();
+        return;
     }
     
     buynsell();
@@ -2253,11 +2377,24 @@ void buyprod() {
 
     cout << "\n\n";
     cout << setw(70) << "" << "+----------------------------------+" << endl;
-    cout << setw(70) << "" << "| Select a No. of Product:         |" << endl;
+    cout << setw(70) << "" << "| Select a No. of Product or       |" << endl;
+    cout << setw(70) << "" << "| Type [0] to exit:                |" << endl;
     cout << setw(70) << "" << "| > ";
-    cin >> num;
+    while (!(cin >> num)) {
+        cin.clear();
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        cout << "\n\n";
+        cout << setw(70) << "" << "+----------------------------+" << endl;
+        cout << setw(70) << "" << "| Invalid input! Please      |" << endl;
+        cout << setw(70) << "" << "| enter a number:            |" << endl;
+        cout << setw(70) << "" << "| > ";
+    }
     cout << setw(70) << "" << "+----------------------------------+" << endl;
 
+    if(num == 0){
+        buynsell();
+        return;
+    }
     for (int i = 0; i < bid; i++) {
         if (i + 1 == num) {
             index = i;
@@ -2305,13 +2442,8 @@ void buyprod() {
                 save(type);
                 break;
             } else if (purchase == 'n' || purchase == 'N') {
-                cout << "\n\n";
-                cout << setw(70) << "" << "+----------------------------------+" << endl;
-                cout << setw(70) << "" << "| Going back to buy 'n sell menu.. |" << endl;
-                cout << setw(70) << "" << "+----------------------------------+" << endl;
-                this_thread::sleep_for(chrono::seconds(2));
-                buynsell();
-                break;
+                buyprod();
+                return;
             } else {
                 cout << "\n\n";
                 cout << setw(70) << "" << "+----------------------------------+" << endl;
@@ -2326,6 +2458,8 @@ void buyprod() {
         cout << setw(70) << "" << "| No. of Product not found!        |" << endl;
         cout << setw(70) << "" << "+----------------------------------+" << endl;
         this_thread::sleep_for(chrono::seconds(3));
+        buyprod();
+        return;
     }
 
     buynsell();
@@ -2390,7 +2524,7 @@ void viewsold(){
             int opt;
             do {
                 system("CLS");
-                cout << "\n\n\n";
+                cout << "\n\n\n\n\n";
                 cout << setw(85) << "" << "+----------------------------------+" << endl;
                 cout << setw(85) << "" << "|       SEARCH PRODUCTS BY:        |" << endl;
                 cout << setw(85) << "" << "+----------------------------------+" << endl;
@@ -2703,6 +2837,8 @@ void collect() {
         cout << setw(70) << "" << "|          ID not found!           |" << endl;
         cout << setw(70) << "" << "+----------------------------------+" << endl;
         this_thread::sleep_for(chrono::seconds(3));
+        collect();
+        return;
     }
 
     paymenu();
@@ -2711,27 +2847,27 @@ void viewcancel(){
     loadcancel(); 
 	system("CLS");
     cout << "\n\n";
-    cout<<"Cancelled Request: \n";
+    cout << setw(3) << "" <<"Cancelled Request: \n";
     // Table header
-    cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+    cout << setw(3) << "" << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
          << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
          << string(32, '-') << "+" << string(15, '-') << "+" << string(12, '-') << "+"
          << string(10, '-') << "+\n";
          
-    cout << "| " << left << setw(3) << "ID" << " | " << setw(30) << "Customer Name" << " | "
+    cout << setw(3) << "" << "| " << left << setw(3) << "ID" << " | " << setw(30) << "Customer Name" << " | "
          << setw(13) << "Contact No." << " | " << setw(13) << "Device Type" << " | "
          << setw(13) << "Brand" << " | " << setw(18) << "Model" << " | " << setw(30) << "Issue" << " | "
          << setw(13) << "Status" << " | " << setw(10) << "Date" << " | "
          << setw(8) << "Time" << " |\n";
          
-    cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+    cout << setw(3) << "" << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
          << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
          << string(32, '-') << "+" << string(15, '-') << "+" << string(12, '-') << "+"
          << string(10, '-') << "+\n";
     
     // Table rows
     for (int i = 0; i < canid; i++) {
-        cout << "| " << setw(3) << left << i+1 << " | " 
+        cout << setw(3) << "" << "| " << setw(3) << left << i+1 << " | " 
              << setw(30) << cancel[i].cname << " | "
              << setw(13) << cancel[i].cnum << " | "
              << setw(13) << cancel[i].dtype << " | "
@@ -2742,7 +2878,7 @@ void viewcancel(){
              << setw(10) << cancel[i].date << " | "
              << setw(8) << cancel[i].time << " |\n";
              
-        cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+        cout << setw(3) << "" << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
              << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
              << string(32, '-') << "+" << string(15, '-') << "+" << string(12, '-') << "+"
              << string(10, '-') << "+\n";
@@ -2763,35 +2899,37 @@ void viewcancel(){
             do {
                 system("CLS");
                 cout << "\n\n\n\n";
-                cout << setw(80) << "" << "+----------------------------------+" << endl;
-                cout << setw(80) << "" << "|     SEARCH CANCELLED REQUESTS    |" << endl;
-                cout << setw(80) << "" << "+----------------------------------+" << endl;
-                cout << setw(80) << "" << "| 1. Customer Name                 |" << endl;
-                cout << setw(80) << "" << "|                                  |" << endl;
-                cout << setw(80) << "" << "| 2. Device Type                   |" << endl;
-                cout << setw(80) << "" << "|                                  |" << endl;
-                cout << setw(80) << "" << "| 3. Brand                         |" << endl;
-                cout << setw(80) << "" << "|                                  |" << endl;
-                cout << setw(80) << "" << "| 4. Model                         |" << endl;
-                cout << setw(80) << "" << "|                                  |" << endl;
-                cout << setw(80) << "" << "| 5. Issue                         |" << endl;
-                cout << setw(80) << "" << "|                                  |" << endl;
-                cout << setw(80) << "" << "| 6. Date                          |" << endl;
-                cout << setw(80) << "" << "|                                  |" << endl;
-                cout << setw(80) << "" << "| 7. Go Back                       |" << endl;
-                cout << setw(80) << "" << "+----------------------------------+" << endl;
-                cout << setw(80) << "" << "| Enter your choice:               |" << endl;
-                cout << setw(80) << "" << "| > ";
+                cout << setw(72) << "" << "+----------------------------------+" << endl;
+                cout << setw(72) << "" << "|     SEARCH CANCELLED REQUESTS    |" << endl;
+                cout << setw(72) << "" << "+----------------------------------+" << endl;
+                cout << setw(72) << "" << "| 1. Customer Name                 |" << endl;
+                cout << setw(72) << "" << "|                                  |" << endl;
+                cout << setw(72) << "" << "| 2. Device Type                   |" << endl;
+                cout << setw(72) << "" << "|                                  |" << endl;
+                cout << setw(72) << "" << "| 3. Brand                         |" << endl;
+                cout << setw(72) << "" << "|                                  |" << endl;
+                cout << setw(72) << "" << "| 4. Model                         |" << endl;
+                cout << setw(72) << "" << "|                                  |" << endl;
+                cout << setw(72) << "" << "| 5. Issue                         |" << endl;
+                cout << setw(72) << "" << "|                                  |" << endl;
+                cout << setw(72) << "" << "| 6. Date                          |" << endl;
+                cout << setw(72) << "" << "|                                  |" << endl;
+                cout << setw(72) << "" << "| 7. Go Back                       |" << endl;
+                cout << setw(72) << "" << "+----------------------------------+" << endl;
+                cout << setw(72) << "" << "| Enter your choice:               |" << endl;
+                cout << setw(72) << "" << "| > ";
                 while (!(cin >> opt)) {
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                     cout << "\n\n";
-                    cout << setw(80) << "" << "+----------------------------------+" << endl;
-                    cout << setw(80) << "" << "| Invalid input! Please enter a    |" << endl;
-                    cout << setw(80) << "" << "| number:                          |" << endl;
-                    cout << setw(80) << "" << "| > ";
+                    cout << setw(72) << "" << "+----------------------------------+" << endl;
+                    cout << setw(72) << "" << "| Invalid input! Please enter a    |" << endl;
+                    cout << setw(72) << "" << "| number:                          |" << endl;
+                    cout << setw(72) << "" << "| > ";
                 }
-                cout << setw(80) << "" << "+----------------------------------+" << endl;
+                cout << setw(72) << "" << "+----------------------------------+" << endl;
+
+                system("CLS");
 
                 switch (opt) {
                     case 1: searchByCname(cancel, canid, type); break;
@@ -2803,9 +2941,9 @@ void viewcancel(){
                     case 7: viewcancel(); return;
                     default:
                         cout << "\n\n";
-                        cout << setw(80) << "" << "+----------------------------------+" << endl;
-                        cout << setw(80) << "" << "| Invalid input. Please try again. |" << endl;
-                        cout << setw(80) << "" << "+----------------------------------+" << endl;
+                        cout << setw(72) << "" << "+----------------------------------+" << endl;
+                        cout << setw(72) << "" << "| Invalid input. Please try again. |" << endl;
+                        cout << setw(72) << "" << "+----------------------------------+" << endl;
                         this_thread::sleep_for(chrono::seconds(2));
                         continue;
                 }
@@ -2836,27 +2974,27 @@ void viewcomplete(){
     loadcomplete(); 
 	system("CLS");
     cout << "\n\n";
-    cout<<"Completed Request:\n";
+    cout << setw(5) << "" <<"Completed Request:\n";
     // Table header
-    cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+    cout << setw(5) << "" << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
          << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
          << string(32, '-') << "+" << string(11, '-') << "+" << string(15, '-') << "+" 
          << string(12, '-') << "+" << string(10, '-') << "+\n";
          
-    cout << "| " << left << setw(3) << "ID" << " | " << setw(30) << "Customer Name" << " | "
+    cout << setw(5) << "" << "| " << left << setw(3) << "ID" << " | " << setw(30) << "Customer Name" << " | "
          << setw(13) << "Contact No." << " | " << setw(13) << "Device Type" << " | "
          << setw(13) << "Brand" << " | " << setw(18) << "Model" << " | " << setw(30) << "Issue" << " | "
          << setw(9) << "Status" << " | " << setw(13) << "Rate" << " | " << setw(10) << "Date" << " | "
          << setw(8) << "Time" << " |\n";
          
-    cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+    cout << setw(5) << "" << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
          << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
          << string(32, '-') << "+" << string(11, '-') << "+" << string(15, '-') << "+" 
          << string(12, '-') << "+" << string(10, '-') << "+\n";
     
     // Table rows
     for (int i = 0; i < comid; i++) {
-        cout << "| " << setw(3) << left << i+1 << " | " 
+        cout << setw(5) << "" << "| " << setw(3) << left << i+1 << " | " 
              << setw(30) << complete[i].cname << " | "
              << setw(13) << complete[i].cnum << " | "
              << setw(13) << complete[i].dtype << " | "
@@ -2868,7 +3006,7 @@ void viewcomplete(){
              << setw(10) << complete[i].date << " | "
              << setw(8) << complete[i].time << " |\n";
              
-        cout << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
+        cout << setw(5) << "" << "+" << string(5, '-') << "+" << string(32, '-') << "+" << string(15, '-') << "+"
             << string(15, '-') << "+" << string(15, '-') << "+" << string(20, '-') << "+"
             << string(32, '-') << "+" << string(11, '-') << "+" << string(15, '-') << "+" 
             << string(12, '-') << "+" << string(10, '-') << "+\n";
@@ -2876,7 +3014,7 @@ void viewcomplete(){
     char a, type = 'c';
     
     while(true) {
-        cout << "\n\n\n";
+        cout << "\n\n";
         cout << setw(70) << "" << "+----------------------------------+" << endl;
         cout << setw(70) << "" << "| Do you want to search?           |" << endl;
         cout << setw(70) << "" << "| [y] YES or [n] NO                |" << endl;
@@ -2889,35 +3027,37 @@ void viewcomplete(){
             do {
                 system("CLS");
                 cout << "\n\n\n\n";
-                cout << setw(80) << "" << "+----------------------------------+" << endl;
-                cout << setw(80) << "" << "|     SEARCH COMPLETED REQUESTS    |" << endl;
-                cout << setw(80) << "" << "+----------------------------------+" << endl;
-                cout << setw(80) << "" << "| 1. Customer Name                 |" << endl;
-                cout << setw(80) << "" << "|                                  |" << endl;
-                cout << setw(80) << "" << "| 2. Device Type                   |" << endl;
-                cout << setw(80) << "" << "|                                  |" << endl;
-                cout << setw(80) << "" << "| 3. Brand                         |" << endl;
-                cout << setw(80) << "" << "|                                  |" << endl;
-                cout << setw(80) << "" << "| 4. Model                         |" << endl;
-                cout << setw(80) << "" << "|                                  |" << endl;
-                cout << setw(80) << "" << "| 5. Issue                         |" << endl;
-                cout << setw(80) << "" << "|                                  |" << endl;
-                cout << setw(80) << "" << "| 6. Date                          |" << endl;
-                cout << setw(80) << "" << "|                                  |" << endl;
-                cout << setw(80) << "" << "| 7. Go Back                       |" << endl;
-                cout << setw(80) << "" << "+----------------------------------+" << endl;
-                cout << setw(80) << "" << "| Enter your choice:               |" << endl;
-                cout << setw(80) << "" << "| > ";
+                cout << setw(72) << "" << "+----------------------------------+" << endl;
+                cout << setw(72) << "" << "|     SEARCH COMPLETED REQUESTS    |" << endl;
+                cout << setw(72) << "" << "+----------------------------------+" << endl;
+                cout << setw(72) << "" << "| 1. Customer Name                 |" << endl;
+                cout << setw(72) << "" << "|                                  |" << endl;
+                cout << setw(72) << "" << "| 2. Device Type                   |" << endl;
+                cout << setw(72) << "" << "|                                  |" << endl;
+                cout << setw(72) << "" << "| 3. Brand                         |" << endl;
+                cout << setw(72) << "" << "|                                  |" << endl;
+                cout << setw(72) << "" << "| 4. Model                         |" << endl;
+                cout << setw(72) << "" << "|                                  |" << endl;
+                cout << setw(72) << "" << "| 5. Issue                         |" << endl;
+                cout << setw(72) << "" << "|                                  |" << endl;
+                cout << setw(72) << "" << "| 6. Date                          |" << endl;
+                cout << setw(72) << "" << "|                                  |" << endl;
+                cout << setw(72) << "" << "| 7. Go Back                       |" << endl;
+                cout << setw(72) << "" << "+----------------------------------+" << endl;
+                cout << setw(72) << "" << "| Enter your choice:               |" << endl;
+                cout << setw(72) << "" << "| > ";
                 while (!(cin >> opt)) {
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                     cout << "\n\n";
-                    cout << setw(80) << "" << "+----------------------------------+" << endl;
-                    cout << setw(80) << "" << "| Invalid input! Please enter a    |" << endl;
-                    cout << setw(80) << "" << "| number:                          |" << endl;
-                    cout << setw(80) << "" << "| > ";
+                    cout << setw(72) << "" << "+----------------------------------+" << endl;
+                    cout << setw(72) << "" << "| Invalid input! Please enter a    |" << endl;
+                    cout << setw(72) << "" << "| number:                          |" << endl;
+                    cout << setw(72) << "" << "| > ";
                 }
-                cout << setw(80) << "" << "+----------------------------------+" << endl;
+                cout << setw(72) << "" << "+----------------------------------+" << endl;
+
+                system("CLS");
 
                 switch (opt) {
                     case 1: searchByCname(complete, comid, type); break;
@@ -2929,9 +3069,9 @@ void viewcomplete(){
                     case 7: viewcomplete(); return;
                     default:
                         cout << "\n\n";
-                        cout << setw(80) << "" << "+----------------------------------+" << endl;
-                        cout << setw(80) << "" << "| Invalid input. Please try again. |" << endl;
-                        cout << setw(80) << "" << "+----------------------------------+" << endl;
+                        cout << setw(72) << "" << "+----------------------------------+" << endl;
+                        cout << setw(72) << "" << "| Invalid input. Please try again. |" << endl;
+                        cout << setw(72) << "" << "+----------------------------------+" << endl;
                         this_thread::sleep_for(chrono::seconds(2));
                         continue;
                 }
@@ -2943,17 +3083,17 @@ void viewcomplete(){
             break;
         } else {
             cout << "\n\n";
-            cout << setw(80) << "" << "+----------------------------------+" << endl;
-            cout << setw(80) << "" << "|         Invalid Input            |" << endl;
-            cout << setw(80) << "" << "+----------------------------------+" << endl;
+            cout << setw(70) << "" << "+----------------------------------+" << endl;
+            cout << setw(70) << "" << "|         Invalid Input            |" << endl;
+            cout << setw(70) << "" << "+----------------------------------+" << endl;
             this_thread::sleep_for(chrono::seconds(2));
         }
     }
 
     cout << "\n\n";
-    cout << setw(80) << "" << "+----------------------------------+" << endl;
-    cout << setw(80) << "" << "|      Press Enter to exit:        |" << endl;
-    cout << setw(80) << "" << "+----------------------------------+" << endl;
+    cout << setw(70) << "" << "+----------------------------------+" << endl;
+    cout << setw(70) << "" << "|      Press Enter to exit:        |" << endl;
+    cout << setw(70) << "" << "+----------------------------------+" << endl;
     cin.ignore();
     cin.get();
     paymenu();
