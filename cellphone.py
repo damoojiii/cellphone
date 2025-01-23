@@ -1,5 +1,6 @@
 import os
 import json
+import hashlib
 from datetime import datetime, timedelta
 import time
 
@@ -55,6 +56,235 @@ def save_tickets():
     }
     with open("tickets.json", "w") as file:
         json.dump(data, file, indent=4)
+
+# Account Functions
+
+def create_account():
+    """Create a new user account with validation"""
+    os.system("cls" if os.name == "nt" else "clear")
+    print("\n" * 3)
+    print("+" + "-" * 40 + "+")
+    print("|         Create New Account         |")
+    print("+" + "-" * 40 + "+")
+
+    # Username validation
+    while True:
+        username = input("Enter username: ").strip()
+        if len(username) >= 4:
+            if not check_existing_username(username):
+                break
+            print("Username already exists. Please choose another.")
+        else:
+            print("Username must be at least 4 characters long.")
+
+    # Password validation using separate function
+    hashed_password = validate_password()
+
+    # Secret question and answer
+    print("\nSecret Questions:")
+    print("1. What is your mother's maiden name?")
+    print("2. What was your first pet's name?")
+    print("3. What city were you born in?")
+    
+    while True:
+        try:
+            question_choice = int(input("Choose a question (1-3): "))
+            if 1 <= question_choice <= 3:
+                break
+            print("Please choose a number between 1 and 3.")
+        except ValueError:
+            print("Please enter a valid number.")
+
+    secret_answer = input("Your answer: ").strip()
+
+    # Save account details
+    account = {
+        "username": username,
+        "password": hashed_password,
+        "question": question_choice,
+        "answer": secret_answer
+    }
+
+    save_account(account)
+    print("\nAccount created successfully!")
+    time.sleep(2)
+    return True
+
+def login():
+    """Handle user login"""
+    while True:
+        os.system("cls" if os.name == "nt" else "clear")
+        print("\n" * 3)
+        print("+" + "-" * 40 + "+")
+        print("|              Login                 |")
+        print("+" + "-" * 40 + "+")
+        print("| 1. Login                          |")
+        print("| 2. Forgot Password                |")
+        print("| 3. Exit                           |")
+        print("+" + "-" * 40 + "+")
+        
+        choice = input("Enter choice: ").strip()
+        
+        if choice == "1":
+            username = input("Enter username: ").strip()
+            password = input("Enter password: ").strip()
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+            
+            with open("accounts.json", "r") as file:
+                accounts = json.load(file)
+                for account in accounts:
+                    if account["username"] == username and account["password"] == hashed_password:
+                        print("\nLogin successful!")
+                        time.sleep(2)
+                        return True
+            
+            print("\nInvalid credentials!")
+            time.sleep(2)
+        
+        elif choice == "2":
+            if forgot_password():
+                continue
+        
+        elif choice == "3":
+            exit(0)
+        
+        else:
+            print("\nInvalid choice!")
+            time.sleep(2)
+
+def forgot_password():
+    """Handle password recovery using secret question"""
+    os.system("cls" if os.name == "nt" else "clear")
+    print("\n" * 3)
+    print("+" + "-" * 40 + "+")
+    print("|         Password Recovery            |")
+    print("+" + "-" * 40 + "+")
+    
+    username = input("Enter your username: ").strip()
+    
+    # Load accounts
+    with open("accounts.json", "r") as file:
+        accounts = json.load(file)
+        
+    # Find user account
+    user_account = None
+    for account in accounts:
+        if account["username"] == username:
+            user_account = account
+            break
+    
+    if not user_account:
+        print("\nUsername not found!")
+        time.sleep(2)
+        return False
+    
+    # Display secret question
+    questions = [
+        "What is your mother's maiden name?",
+        "What was your first pet's name?",
+        "What city were you born in?"
+    ]
+    print(f"\nSecret Question: {questions[user_account['question']-1]}")
+    answer = input("Your answer: ").strip()
+    
+    if answer == user_account["answer"]:
+        # Reset password
+        print("\nAnswer correct! Please set a new password.")
+        new_password = validate_password()
+        
+        # Update password in accounts
+        user_account["password"] = new_password
+        
+        # Save updated accounts
+        with open("accounts.json", "w") as file:
+            json.dump(accounts, file, indent=4)
+            
+        print("\nPassword reset successful!")
+        time.sleep(2)
+        return True
+    else:
+        print("\nIncorrect answer!")
+        time.sleep(2)
+        return False
+
+def validate_password():
+    """Validate password with specific requirements"""
+    print("\n" + "+" + "-" * 50 + "+")
+    print("|           Password Requirements:                    |")
+    print("+" + "-" * 50 + "+")
+    print("| • Minimum 8 characters                             |")
+    print("| • At least 1 uppercase letter                      |")
+    print("| • At least 1 lowercase letter                      |") 
+    print("| • At least 1 number                                |")
+    print("| • At least 1 special character (!@#$%^&*()_+-=[]{})|")
+    print("+" + "-" * 50 + "+\n")
+    while True:
+        password = input("Enter password: ").strip()
+        
+        # Check minimum length
+        if len(password) < 8:
+            print("Password must be at least 8 characters long")
+            continue
+            
+        # Check for uppercase
+        if not any(c.isupper() for c in password):
+            print("Password must contain at least one uppercase letter")
+            continue
+            
+        # Check for lowercase
+        if not any(c.islower() for c in password):
+            print("Password must contain at least one lowercase letter")
+            continue
+            
+        # Check for digits
+        if not any(c.isdigit() for c in password):
+            print("Password must contain at least one number")
+            continue
+            
+        # Check for special characters
+        special_chars = "!@#$%^&*()_+-=[]{}|;:,.<>?"
+        if not any(c in special_chars for c in password):
+            print("Password must contain at least one special character")
+            continue
+            
+        # Confirm password
+        confirm_password = input("Confirm password: ").strip()
+        if password != confirm_password:
+            print("Passwords do not match")
+            continue
+            
+        # Return hashed password if all requirements are met
+        return hashlib.sha256(password.encode()).hexdigest()
+
+def check_existing_username(username):
+    """Check if username already exists"""
+    if not os.path.exists("accounts.json"):
+        return False
+    
+    with open("accounts.json", "r") as file:
+        accounts = json.load(file)
+        return any(account["username"] == username for account in accounts)
+
+def check_json_empty():
+    """Check if accounts.json exists and is empty"""
+    if not os.path.exists("accounts.json"):
+        return True
+    with open("accounts.json", "r") as file:
+        accounts = json.load(file)
+        return len(accounts) == 0
+
+def save_account(account):
+    """Save account to JSON file"""
+    accounts = []
+    if os.path.exists("accounts.json"):
+        with open("accounts.json", "r") as file:
+            accounts = json.load(file)
+    
+    accounts.append(account)
+    
+    with open("accounts.json", "w") as file:
+        json.dump(accounts, file, indent=4)
+
 
 
 # Ticket Creation Function
@@ -481,4 +711,9 @@ def main_menu():
 
 if __name__ == "__main__":
     load_tickets()
+    if check_json_empty():
+        create_account()
+    else:
+        while not login():
+            pass
     main_menu()
